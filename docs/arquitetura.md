@@ -328,7 +328,9 @@ O protótipo de ponta a ponta segue esta arquitetura, com simplificações consc
 | Telas com estado em `remember`, sem ViewModel | só duas telas | ViewModels por tela, conforme a seção 9 |
 | Sem `build-logic/` | sete módulos ainda são poucos | convenções de build quando a configuração repetida crescer |
 | Sem predição nem `TiltFallback` com giroscópio | medir antes de otimizar | estágios novos no `SteeringPipeline`, se o teste no Poco X8 Pro pedir |
-| Telas mínimas, sem as fontes Barlow e Inter | foco no funcionamento | telas do design aprovado |
+| ~~Telas mínimas no Android~~ | resolvido em 7/nov: Início, Pareamento, Ajustes (salvos), Calibração com teste de sensores e Dirigir no visual aprovado, com Barlow e Inter | — |
+| Programa do Windows sem o visual do design (barra lateral, fontes) | prioridade foi o celular | junto com o instalador (RF-14) |
+| Atalhos "Atribuir" ficam na tela Dirigir, não na Início | precisam de uma sessão aberta com o PC | rever se o teste com usuários pedir |
 
 ## 14. O que ainda está em aberto
 
