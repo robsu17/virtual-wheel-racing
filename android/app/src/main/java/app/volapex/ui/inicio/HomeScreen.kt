@@ -33,7 +33,7 @@ import app.volapex.ui.components.VolapexCard
 import app.volapex.ui.components.drawChevronRight
 import app.volapex.ui.components.drawMonitor
 import app.volapex.ui.components.drawSliders
-import app.volapex.ui.components.drawWheel
+import app.volapex.ui.components.drawLogo
 import app.volapex.ui.theme.Fonts
 import app.volapex.ui.theme.Palette
 import kotlin.math.roundToInt
@@ -57,7 +57,7 @@ fun HomeScreen(
         verticalArrangement = Arrangement.spacedBy(14.dp),
     ) {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-            Canvas(Modifier.size(32.dp)) { drawWheel(Palette.Amber) }
+            Canvas(Modifier.size(34.dp)) { drawLogo() }
             Text(
                 "Volapex",
                 fontFamily = Fonts.Display,

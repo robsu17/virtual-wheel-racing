@@ -1,6 +1,7 @@
 package app.volapex.desktop
 
 import app.volapex.desktop.receiver.ReceiverService
+import app.volapex.desktop.setup.WindowsSetup
 import app.volapex.desktop.vjoy.VJoyAdapter
 import app.volapex.domain.DriverStatus
 import app.volapex.domain.OpenResult
@@ -22,14 +23,19 @@ class DesktopContainer : AutoCloseable {
     private val random = SecureRandom()
     private val pairingStore = PairingStore(defaultStorePath())
     private val vjoy = VJoyAdapter()
-    val openResult: OpenResult = vjoy.open()
-    val driverStatus: DriverStatus = vjoy.check()
+    val setup = WindowsSetup()
     val receiver = ReceiverService(vjoy, random = random)
     val port: Int = ProtocolDefaults.PORT
     val addresses: List<String> = localIpv4Addresses()
     val pcName: String = localPcName()
 
     private var pairingKey: ByteArray = pairingStore.load() ?: newKeySaved()
+
+    @Volatile var openResult: OpenResult = vjoy.open()
+        private set
+
+    @Volatile var driverStatus: DriverStatus = vjoy.check()
+        private set
 
     var startError: String? = null
         private set
@@ -41,6 +47,14 @@ class DesktopContainer : AutoCloseable {
         } catch (e: IOException) {
             startError = "Não foi possível abrir a porta $port: ${e.message}"
         }
+    }
+
+    /** Reabre o vJoy depois de instalar ou configurar o driver. */
+    @Synchronized
+    fun refreshDriver() {
+        vjoy.close()
+        openResult = vjoy.open()
+        driverStatus = vjoy.check()
     }
 
     /** Conteúdo do QR, ou null se o PC não estiver em nenhuma rede local. */

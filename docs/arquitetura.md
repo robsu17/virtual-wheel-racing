@@ -329,7 +329,10 @@ O protótipo de ponta a ponta segue esta arquitetura, com simplificações consc
 | Sem `build-logic/` | sete módulos ainda são poucos | convenções de build quando a configuração repetida crescer |
 | Sem predição nem `TiltFallback` com giroscópio | medir antes de otimizar | estágios novos no `SteeringPipeline`, se o teste no Poco X8 Pro pedir |
 | ~~Telas mínimas no Android~~ | resolvido em 7/nov: Início, Pareamento, Ajustes (salvos), Calibração com teste de sensores e Dirigir no visual aprovado, com Barlow e Inter | — |
-| Programa do Windows sem o visual do design (barra lateral, fontes) | prioridade foi o celular | junto com o instalador (RF-14) |
+| ~~Programa do Windows sem o visual do design~~ | resolvido em 7/nov: barra lateral com Painel, Conectar celular e Verificação do PC | — |
+| Instalador MSI sem ações próprias | o jpackage não roda passos extras na instalação | a Verificação do PC instala o vJoy que vem junto, configura o dispositivo 1 e libera o firewall, cada um com o aviso de administrador do Windows; um instalador único (Inno Setup ou WiX com ações) fica para o beta |
+| Instalador e app sem assinatura digital | sem certificado ainda | certificado OV; até lá, o Windows mostra o aviso do SmartScreen |
+| Regra de bloqueio do firewall não é detectada | se o usuário recusou o aviso do Windows antes, a regra de bloqueio vence | detectar e remover regras de bloqueio do Volapex |
 | Atalhos "Atribuir" ficam na tela Dirigir, não na Início | precisam de uma sessão aberta com o PC | rever se o teste com usuários pedir |
 
 ## 14. O que ainda está em aberto

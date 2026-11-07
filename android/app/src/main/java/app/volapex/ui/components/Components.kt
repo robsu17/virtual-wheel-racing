@@ -185,16 +185,18 @@ fun DrawScope.drawSliders(color: Color) {
     }
 }
 
-/** Logo: volante de três raios. */
-fun DrawScope.drawWheel(color: Color) {
-    val w = size.width
-    val s = stroke(2.2.dp)
-    val c = Offset(w / 2f, w / 2f)
-    drawCircle(color, radius = w * 0.4f, center = c, style = s)
-    drawCircle(color, radius = w * 0.1f, center = c, style = s)
-    drawLine(color, Offset(w * 0.12f, w * 0.45f), Offset(w * 0.4f, w * 0.45f), strokeWidth = s.width, cap = StrokeCap.Round)
-    drawLine(color, Offset(w * 0.6f, w * 0.45f), Offset(w * 0.88f, w * 0.45f), strokeWidth = s.width, cap = StrokeCap.Round)
-    drawLine(color, Offset(w * 0.5f, w * 0.6f), Offset(w * 0.5f, w * 0.88f), strokeWidth = s.width, cap = StrokeCap.Round)
+/** Logo do Volapex (opção A): volante cujos raios formam um V, com o centro em branco. */
+fun DrawScope.drawLogo() {
+    val u = size.width / 100f
+    val s = Stroke(width = 9f * u, cap = StrokeCap.Round, join = StrokeJoin.Round)
+    drawCircle(Palette.Amber, radius = 38f * u, center = Offset(50f * u, 50f * u), style = s)
+    val v = Path().apply {
+        moveTo(19f * u, 33f * u)
+        lineTo(50f * u, 68f * u)
+        lineTo(81f * u, 33f * u)
+    }
+    drawPath(v, Palette.Amber, style = s)
+    drawCircle(Palette.Text, radius = 7f * u, center = Offset(50f * u, 68f * u))
 }
 
 fun DrawScope.drawMonitor(color: Color) {

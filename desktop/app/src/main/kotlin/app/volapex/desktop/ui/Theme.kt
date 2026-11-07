@@ -2,6 +2,9 @@ package app.volapex.desktop.ui
 
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.platform.Font
 
 /** Cores do design aprovado. */
 object Palette {
@@ -31,5 +34,22 @@ object Palette {
         onSurfaceVariant = Muted,
         outline = Line,
         error = Brake,
+    )
+}
+
+/** Títulos e números em Barlow Semi Condensed (OFL), como no design; texto na fonte do Windows. */
+object Fonts {
+    val Display: FontFamily = runCatching {
+        FontFamily(
+            load("barlow_semicondensed_semibold", FontWeight.SemiBold),
+            load("barlow_semicondensed_bold", FontWeight.Bold),
+        )
+    }.getOrDefault(FontFamily.Default)
+
+    private fun load(name: String, weight: FontWeight) = Font(
+        identity = name,
+        data = requireNotNull(Fonts::class.java.getResourceAsStream("/fonts/$name.ttf")) { "Fonte $name ausente" }
+            .use { it.readBytes() },
+        weight = weight,
     )
 }
