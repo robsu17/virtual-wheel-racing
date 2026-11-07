@@ -46,7 +46,7 @@ import kotlin.math.roundToInt
 @Composable
 fun PainelScreen(container: DesktopContainer) {
     var snapshot by remember { mutableStateOf(container.receiver.snapshot()) }
-    var pin by remember { mutableStateOf(container.pin) }
+    var payload by remember { mutableStateOf(container.pairingPayload()) }
 
     LaunchedEffect(Unit) {
         while (true) {
@@ -65,16 +65,19 @@ fun PainelScreen(container: DesktopContainer) {
 
                 Row(horizontalArrangement = Arrangement.spacedBy(20.dp)) {
                     Panel("Conectar um celular", Modifier.weight(1f)) {
-                        Label("Endereço do PC")
-                        if (container.addresses.isEmpty()) {
-                            Text("Nenhuma rede local encontrada", color = Palette.Brake)
+                        val current = payload
+                        if (current == null) {
+                            Text("Nenhuma rede local encontrada. Conecte o PC ao Wi-Fi ou ao cabo de rede.", color = Palette.Brake)
                         } else {
-                            container.addresses.forEach { Text(it, fontSize = 26.sp, fontWeight = FontWeight.SemiBold) }
+                            Label("No app Volapex do Android, toque em Ler código QR e aponte a câmera para cá.")
+                            QrCode(current.encode(), Modifier.size(260.dp))
+                            Label("${container.pcName} · ${current.hosts.joinToString(", ")} · porta ${container.port}")
                         }
-                        Label("PIN")
-                        Text(pin.chunked(3).joinToString(" "), fontSize = 40.sp, fontWeight = FontWeight.Bold)
-                        Label("Porta ${container.port} · celular e PC na mesma rede Wi-Fi")
-                        OutlinedButton(onClick = { pin = container.newPin() }) { Text("Gerar novo PIN") }
+                        Label("O celular lembra deste PC. Gerar outro código desconecta os celulares pareados.")
+                        OutlinedButton(onClick = {
+                            container.newPairingCode()
+                            payload = container.pairingPayload()
+                        }) { Text("Gerar novo código") }
                     }
                     Panel("Verificação do PC", Modifier.weight(1f)) {
                         val driver = container.driverStatus
@@ -89,7 +92,7 @@ fun PainelScreen(container: DesktopContainer) {
                 }
 
                 Panel("Conexão", Modifier.fillMaxWidth()) {
-                    StatusPill(snapshot.connected, snapshot.health)
+                    StatusPill(snapshot.connected, snapshot.health, snapshot.peer)
                     AxisBar("Direção", snapshot.steering, centered = true, color = Palette.Amber)
                     Row(horizontalArrangement = Arrangement.spacedBy(20.dp)) {
                         Box(Modifier.weight(1f)) { AxisBar("Acelerador", snapshot.throttle, centered = false, color = Palette.Throttle) }
@@ -144,10 +147,11 @@ private fun CheckLine(text: String, ok: Boolean) {
 }
 
 @Composable
-private fun StatusPill(connected: Boolean, health: LinkHealth) {
+private fun StatusPill(connected: Boolean, health: LinkHealth, peer: String?) {
     val (text, foreground, background) = when {
+        !connected && peer != null -> Triple("Celular $peer pareado, aguardando dados", Palette.Amber, Palette.WarnBackground)
         !connected -> Triple("Aguardando o celular", Palette.Muted, Palette.Surface2)
-        health == LinkHealth.OK -> Triple("Conectado", Palette.Throttle, Palette.OkBackground)
+        health == LinkHealth.OK -> Triple("Conectado a ${peer ?: "celular"}", Palette.Throttle, Palette.OkBackground)
         health == LinkHealth.WARNING -> Triple("Sinal instável", Palette.Amber, Palette.WarnBackground)
         else -> Triple("Sem sinal · failsafe ativo", Palette.Brake, Palette.ErrorBackground)
     }

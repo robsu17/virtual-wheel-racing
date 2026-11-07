@@ -255,11 +255,14 @@ Não existe `GameProfile`: a configuração é universal.
 |---|---|
 | `PacketLayout` | constantes de offset do pacote de 32 bytes (magic, versão, tipo, flags, sessão, seq, tempo, eixos, botões, HMAC) |
 | `PacketCodec` | escrever e ler o layout em `ByteArray` |
-| `PacketType` | `HELLO`, `WELCOME`, `STATE`, `BYE`, `PING` |
-| `PacketAuthenticator` | HMAC-SHA256 truncado em 8 bytes, com chave de sessão |
-| `SessionKeyDerivation` | chave de sessão a partir da chave de pareamento e de dois nonces (HKDF) |
+| `PacketType` | `HELLO`, `WELCOME`, `STATE`, `BYE`, `HEARTBEAT` |
+| `PacketAuthenticator` | HMAC-SHA256 truncado em 8 bytes |
+| `ClientHandshake` / `ServerHandshake` | HELLO e WELCOME assinados com a chave do QR, com um nonce de 64 bits de cada lado; o PC recusa HELLO repetido |
+| `SessionKeys` | chave da sessão = HMAC(chave do QR, sessão + nonce do celular + nonce do PC); STATE, BYE e HEARTBEAT usam só ela |
 | `SequenceGuard` | descarta `seq` antigo ou repetido |
-| `PairingPayload` | conteúdo do QR: endereços, porta, chave de pareamento, impressão digital; versão de formato |
+| `PairingPayload` | conteúdo do QR (`volapex:1?n=…&h=…&p=…&k=…`): nome do PC, até 8 endereços, porta e chave de 128 bits |
+
+O celular repete o HELLO a cada 250 ms, para todos os endereços do QR, até receber um WELCOME; depois fala só com o endereço que respondeu. O PC manda HEARTBEAT a cada 500 ms; sem heartbeat por 2 s, o celular volta a procurar. Do lado do PC, 3 s sem pacotes encerram a sessão.
 
 Os testes do protocolo usam pacotes "de ouro": bytes fixos gravados em arquivo, que o celular precisa produzir e o PC precisa aceitar. Se alguém mudar o formato sem querer, os dois lados quebram no teste, e não na estrada.
 
@@ -319,8 +322,9 @@ O protótipo de ponta a ponta segue esta arquitetura, com simplificações consc
 
 | Simplificação | Por quê | O que entra no MVP |
 |---|---|---|
-| Pareamento por PIN de 6 dígitos (`PinPairing`) | rápido de testar | QR com chave aleatória de 128 bits e impressão digital (RF-08) |
-| Sem troca `HELLO`/`WELCOME` | menos peças no primeiro teste | chave de sessão por HKDF; hoje, um pacote gravado de uma sessão antiga ainda pode ser repetido |
+| ~~Pareamento por PIN~~ e ~~sem troca de chaves~~ | resolvidos em 7/nov: QR com chave de 128 bits, HELLO/WELCOME e heartbeat | — |
+| Chave de pareamento guardada em arquivo e SharedPreferences, sem proteção extra | simplicidade | DPAPI no Windows e Android Keystore no celular |
+| Sem alternativa manual ao QR | o leitor do Google cobre o caso comum | digitar um código curto quando a câmera não estiver disponível |
 | Telas com estado em `remember`, sem ViewModel | só duas telas | ViewModels por tela, conforme a seção 9 |
 | Sem `build-logic/` | sete módulos ainda são poucos | convenções de build quando a configuração repetida crescer |
 | Sem predição nem `TiltFallback` com giroscópio | medir antes de otimizar | estágios novos no `SteeringPipeline`, se o teste no Poco X8 Pro pedir |

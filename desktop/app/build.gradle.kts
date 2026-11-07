@@ -21,6 +21,7 @@ dependencies {
     implementation(project(":desktop:vjoy"))
     implementation(compose.desktop.currentOs)
     implementation(compose.material3)
+    implementation(libs.zxing.core)
 }
 
 compose.desktop {

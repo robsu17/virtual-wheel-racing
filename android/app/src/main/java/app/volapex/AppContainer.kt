@@ -9,49 +9,50 @@ import app.volapex.domain.MonotonicClock
 import app.volapex.engine.DrivingSession
 import app.volapex.engine.RotationVectorSource
 import app.volapex.engine.TouchControls
-import app.volapex.engine.UdpPacketSink
+import app.volapex.engine.UdpLink
 import app.volapex.engine.WifiLowLatencyLock
-import app.volapex.protocol.PacketAuthenticator
-import app.volapex.protocol.PinPairing
-import app.volapex.protocol.ProtocolDefaults
+import app.volapex.protocol.PairingPayload
 import java.security.SecureRandom
 
 class VolapexApplication : Application() {
     val container: AppContainer by lazy { AppContainer(this) }
 }
 
-data class Connection(val host: String = "", val pin: String = "", val port: Int = ProtocolDefaults.PORT) {
-    val isValid: Boolean get() = host.isNotBlank() && PinPairing.isValidPin(pin)
-}
-
 /** Raiz de composição do app: o único lugar que liga portas a adaptadores. */
 class AppContainer(private val context: Context) {
-    val preferences = ConnectionPreferences(context)
+    val pairingStore = PairingStore(context)
     val settings = GlobalSettings()
     private val sensorManager = context.getSystemService(SensorManager::class.java)
     private val random = SecureRandom()
 
     fun newControls() = TouchControls(settings)
 
-    fun newSession(connection: Connection, controls: TouchControls) = DrivingSession(
+    fun newSession(pairing: PairingPayload, controls: TouchControls) = DrivingSession(
         orientation = RotationVectorSource(sensorManager),
         controls = controls,
-        sink = UdpPacketSink(connection.host.trim(), connection.port),
-        authenticator = PacketAuthenticator(PinPairing.keyFromPin(connection.pin)),
+        link = UdpLink(pairing.hosts, pairing.port),
+        pairingKey = pairing.pairingKey,
         networkLock = WifiLowLatencyLock(context),
         clock = MonotonicClock { SystemClock.elapsedRealtimeNanos() },
         settings = settings,
-        sessionId = random.nextInt(),
+        random = random,
     )
 }
 
-/** Guarda o último PC usado. Provisório: o MVP usa DataStore criptografado e pareamento por QR. */
-class ConnectionPreferences(context: Context) {
-    private val prefs = context.getSharedPreferences("conexao", Context.MODE_PRIVATE)
+/**
+ * Lembra o último PC pareado, para reconectar sem ler o QR de novo.
+ * Provisório: no MVP a chave vai para o Android Keystore.
+ */
+class PairingStore(context: Context) {
+    private val prefs = context.getSharedPreferences("pareamento", Context.MODE_PRIVATE)
 
-    fun load() = Connection(host = prefs.getString("host", "") ?: "", pin = prefs.getString("pin", "") ?: "")
+    fun load(): PairingPayload? = prefs.getString(KEY, null)?.let(PairingPayload::parse)
 
-    fun save(connection: Connection) {
-        prefs.edit().putString("host", connection.host).putString("pin", connection.pin).apply()
+    fun save(pairing: PairingPayload) {
+        prefs.edit().putString(KEY, pairing.encode()).apply()
+    }
+
+    private companion object {
+        const val KEY = "codigo"
     }
 }

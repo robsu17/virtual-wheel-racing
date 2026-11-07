@@ -14,6 +14,9 @@ import java.io.IOException
 import java.net.DatagramPacket
 import java.net.DatagramSocket
 import java.net.InetAddress
+import java.net.InetSocketAddress
+import java.net.SocketAddress
+import java.net.SocketTimeoutException
 import java.util.concurrent.atomic.AtomicInteger
 
 /** Orientação pela fusão do próprio Android, sem magnetômetro, a 200 Hz. */
@@ -44,30 +47,70 @@ class RotationVectorSource(private val sensorManager: SensorManager) : Orientati
     }
 }
 
-/** Envia por UDP para o PC. Reaproveita o mesmo DatagramPacket a cada envio. */
-class UdpPacketSink(private val host: String, private val port: Int) : PacketSink {
-    private var socket: DatagramSocket? = null
-    private var packet: DatagramPacket? = null
+/**
+ * UDP com o PC. Um socket só, sem `connect`, para poder tentar todos os endereços do QR
+ * e depois falar só com o que respondeu. O envio de STATE reaproveita o mesmo DatagramPacket.
+ */
+class UdpLink(private val hosts: List<String>, private val pcPort: Int) : PacketLink {
+    @Volatile private var socket: DatagramSocket? = null
+    private var candidates: List<InetSocketAddress> = emptyList()
+    private var sendPacket: DatagramPacket? = null
+    private var receivePacket: DatagramPacket? = null
+    @Volatile private var peer: SocketAddress? = null
+
+    @Volatile
+    override var lastSender: SocketAddress? = null
+        private set
 
     override fun open() {
-        val address = InetAddress.getByName(host)
-        // Sem `apply`: dentro dele, `port` seria a porta do próprio socket (-1), e não a do PC.
+        candidates = hosts.map { host -> InetSocketAddress(InetAddress.getByName(host), pcPort) }
         val newSocket = DatagramSocket()
-        newSocket.connect(address, this.port)
+        newSocket.soTimeout = RECEIVE_TIMEOUT_MS
         socket = newSocket
     }
 
+    override fun sendToCandidates(buffer: ByteArray, length: Int) {
+        val s = requireSocket()
+        for (candidate in candidates) s.send(DatagramPacket(buffer, length, candidate))
+    }
+
+    override fun selectPeer(address: SocketAddress) {
+        peer = address
+    }
+
     override fun send(buffer: ByteArray, length: Int) {
-        val s = socket ?: throw IOException("Conexão não aberta")
-        val p = packet?.takeIf { it.data === buffer } ?: DatagramPacket(buffer, length).also { packet = it }
+        val s = requireSocket()
+        val target = peer ?: throw IOException("O PC ainda não respondeu")
+        val p = sendPacket?.takeIf { it.data === buffer } ?: DatagramPacket(buffer, length).also { sendPacket = it }
         p.length = length
+        p.socketAddress = target
         s.send(p)
+    }
+
+    override fun receive(buffer: ByteArray): Int {
+        val s = requireSocket()
+        val p = receivePacket?.takeIf { it.data === buffer } ?: DatagramPacket(buffer, buffer.size).also { receivePacket = it }
+        p.length = buffer.size
+        return try {
+            s.receive(p)
+            lastSender = p.socketAddress
+            p.length
+        } catch (e: SocketTimeoutException) {
+            -1
+        }
     }
 
     override fun close() {
         socket?.close()
         socket = null
-        packet = null
+        sendPacket = null
+        receivePacket = null
+    }
+
+    private fun requireSocket(): DatagramSocket = socket ?: throw IOException("Conexão não aberta")
+
+    private companion object {
+        const val RECEIVE_TIMEOUT_MS = 250
     }
 }
 

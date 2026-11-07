@@ -51,7 +51,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import app.volapex.AppContainer
-import app.volapex.Connection
+import app.volapex.engine.LinkState
+import app.volapex.protocol.PairingPayload
 import app.volapex.domain.AxisAssignment
 import app.volapex.engine.DrivingSession
 import app.volapex.engine.EngineSnapshot
@@ -62,7 +63,7 @@ import kotlin.math.abs
 import kotlin.math.roundToInt
 
 @Composable
-fun DirigirScreen(container: AppContainer, connection: Connection, onBack: () -> Unit) {
+fun DirigirScreen(container: AppContainer, pairing: PairingPayload, onBack: () -> Unit) {
     val controls = remember { container.newControls() }
     var session by remember { mutableStateOf<DrivingSession?>(null) }
     var snapshot by remember { mutableStateOf<EngineSnapshot?>(null) }
@@ -77,7 +78,7 @@ fun DirigirScreen(container: AppContainer, connection: Connection, onBack: () ->
         val observer = LifecycleEventObserver { _, event ->
             when (event) {
                 Lifecycle.Event.ON_START -> if (session == null) {
-                    session = container.newSession(connection, controls).also { it.start() }
+                    session = container.newSession(pairing, controls).also { it.start() }
                 }
                 Lifecycle.Event.ON_STOP -> {
                     session?.stop()
@@ -309,8 +310,11 @@ private fun AssignmentChip(
     }
 }
 
-private fun statusText(snapshot: EngineSnapshot?): String =
-    if (snapshot == null) "Iniciando…" else "${snapshot.sensorRateHz} Hz · ${snapshot.packetsSent} pacotes"
+private fun statusText(snapshot: EngineSnapshot?): String = when {
+    snapshot == null -> "Iniciando…"
+    snapshot.linkState == LinkState.SEARCHING -> "Procurando o PC… · sensor ${snapshot.sensorRateHz} Hz"
+    else -> "Conectado a ${snapshot.peer ?: "PC"} · ${snapshot.sensorRateHz} Hz · ${snapshot.packetsSent} pacotes"
+}
 
 private fun formatDegrees(degrees: Float): String {
     val rounded = degrees.roundToInt()

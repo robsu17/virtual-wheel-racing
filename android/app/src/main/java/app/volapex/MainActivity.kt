@@ -26,16 +26,17 @@ class MainActivity : ComponentActivity() {
 @Composable
 private fun AppRoot(container: AppContainer) {
     var driving by rememberSaveable { mutableStateOf(false) }
-    var connection by remember { mutableStateOf(container.preferences.load()) }
+    var pairing by remember { mutableStateOf(container.pairingStore.load()) }
+    val current = pairing
 
-    if (driving && connection.isValid) {
-        DirigirScreen(container, connection, onBack = { driving = false })
+    if (driving && current != null) {
+        DirigirScreen(container, current, onBack = { driving = false })
     } else {
         ConectarScreen(
-            initial = connection,
+            saved = current,
             onConnect = {
-                container.preferences.save(it)
-                connection = it
+                container.pairingStore.save(it)
+                pairing = it
                 driving = true
             },
         )

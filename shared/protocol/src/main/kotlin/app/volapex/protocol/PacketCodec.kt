@@ -22,6 +22,25 @@ object PacketCodec {
     private const val PEDAL_SCALE = 65535f
 
     fun write(buffer: ByteArray, type: Int, sessionId: Int, sequence: Int, timeMicros: Int, state: WheelState) {
+        writeHeader(buffer, type, sessionId, sequence, timeMicros)
+        putShort(buffer, OFFSET_STEERING, (state.steering * STEERING_SCALE).roundToInt())
+        putShort(buffer, OFFSET_THROTTLE, (state.throttle * PEDAL_SCALE).roundToInt())
+        putShort(buffer, OFFSET_BRAKE, (state.brake * PEDAL_SCALE).roundToInt())
+        putShort(buffer, OFFSET_BUTTONS, state.buttons)
+    }
+
+    /** Pacote de controle: em vez do estado, leva um número de 64 bits (nonce ou zero). */
+    fun writeControl(buffer: ByteArray, type: Int, sessionId: Int, sequence: Int, timeMicros: Int, payload: Long) {
+        writeHeader(buffer, type, sessionId, sequence, timeMicros)
+        putInt(buffer, PacketLayout.OFFSET_PAYLOAD, (payload ushr 32).toInt())
+        putInt(buffer, PacketLayout.OFFSET_PAYLOAD + 4, payload.toInt())
+    }
+
+    fun payload(buffer: ByteArray): Long =
+        (getInt(buffer, PacketLayout.OFFSET_PAYLOAD).toLong() shl 32) or
+            (getInt(buffer, PacketLayout.OFFSET_PAYLOAD + 4).toLong() and 0xFFFFFFFFL)
+
+    private fun writeHeader(buffer: ByteArray, type: Int, sessionId: Int, sequence: Int, timeMicros: Int) {
         require(buffer.size >= SIZE) { "Buffer menor que $SIZE bytes" }
         buffer[OFFSET_MAGIC] = PacketLayout.MAGIC
         buffer[OFFSET_VERSION] = PacketLayout.VERSION
@@ -30,10 +49,6 @@ object PacketCodec {
         putInt(buffer, OFFSET_SESSION, sessionId)
         putInt(buffer, OFFSET_SEQUENCE, sequence)
         putInt(buffer, OFFSET_TIME_MICROS, timeMicros)
-        putShort(buffer, OFFSET_STEERING, (state.steering * STEERING_SCALE).roundToInt())
-        putShort(buffer, OFFSET_THROTTLE, (state.throttle * PEDAL_SCALE).roundToInt())
-        putShort(buffer, OFFSET_BRAKE, (state.brake * PEDAL_SCALE).roundToInt())
-        putShort(buffer, OFFSET_BUTTONS, state.buttons)
         buffer.fill(0.toByte(), OFFSET_MAC, SIZE)
     }
 
