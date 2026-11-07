@@ -14,7 +14,7 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "pr-wheel"
+rootProject.name = "volapex"
 
 include(
     ":shared:domain",

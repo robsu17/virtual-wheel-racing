@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "app.prwheel"
+    namespace = "app.volapex"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "app.prwheel"
+        applicationId = "app.volapex"
         minSdk = 29
         targetSdk = 36
         versionCode = 1

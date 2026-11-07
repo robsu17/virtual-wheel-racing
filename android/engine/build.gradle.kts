@@ -3,7 +3,7 @@ plugins {
 }
 
 android {
-    namespace = "app.prwheel.engine"
+    namespace = "app.volapex.engine"
     compileSdk = 36
 
     defaultConfig {

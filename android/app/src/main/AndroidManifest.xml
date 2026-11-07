@@ -9,9 +9,9 @@
     <uses-feature android:name="android.hardware.sensor.gyroscope" android:required="true" />
 
     <application
-        android:name=".PrWheelApplication"
+        android:name=".VolapexApplication"
         android:allowBackup="false"
-        android:label="PR Wheel"
+        android:label="Volapex"
         android:theme="@android:style/Theme.Material.NoActionBar">
 
         <activity

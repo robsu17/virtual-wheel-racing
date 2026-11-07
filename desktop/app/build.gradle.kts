@@ -25,10 +25,10 @@ dependencies {
 
 compose.desktop {
     application {
-        mainClass = "app.prwheel.desktop.MainKt"
+        mainClass = "app.volapex.desktop.MainKt"
         nativeDistributions {
             targetFormats(TargetFormat.Msi)
-            packageName = "PRWheel"
+            packageName = "Volapex"
             packageVersion = "0.1.0"
         }
     }

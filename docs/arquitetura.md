@@ -1,4 +1,4 @@
-# Arquitetura do PR Wheel
+# Arquitetura do Volapex
 
 Versão 1 · 7 de novembro de 2026 · antes do primeiro código
 
@@ -45,7 +45,7 @@ A regra de dependência é sempre de fora para dentro: telas e adaptadores depen
 Um único repositório Gradle com vários módulos:
 
 ```
-pr-wheel/
+volapex/
 ├─ build-logic/          convenções de build (versão do Kotlin, alvo da JVM, lint)
 ├─ shared/
 │  ├─ domain/            Kotlin/JVM puro — entidades, regras e portas
@@ -331,4 +331,4 @@ O protótipo de ponta a ponta segue esta arquitetura, com simplificações consc
 - **Medidas:** atraso real e pausas de GC só serão conhecidos no protótipo.
 - **Biblioteca de UDP no Android:** `DatagramSocket` comum é o ponto de partida; alternativas só se a medição pedir.
 - **Instalador do Windows:** `jpackage` gera o MSI com o Java embarcado; o encadeamento do instalador do vJoy e da regra de firewall será definido junto com o RF-14.
-- **Nome dos pacotes Kotlin:** depende do nome definitivo do app; até lá, `app.prwheel`.
+- **Nome dos pacotes Kotlin:** depende do nome definitivo do app; até lá, `app.volapex`.
