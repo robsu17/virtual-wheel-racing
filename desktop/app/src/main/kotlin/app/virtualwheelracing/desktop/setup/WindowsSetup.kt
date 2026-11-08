@@ -4,6 +4,7 @@ import app.virtualwheelracing.protocol.ProtocolDefaults
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
+import java.util.Base64
 import java.util.concurrent.TimeUnit
 
 /** Resultado de uma ação de configuração do Windows. */
@@ -60,8 +61,11 @@ class WindowsSetup(
         val argumentList = if (arguments.isBlank()) "" else " -ArgumentList ${psQuote(arguments)}"
         val script = "try { \$p = Start-Process -FilePath ${psQuote(file)}$argumentList -Verb RunAs -Wait -PassThru " +
             "-WindowStyle Hidden; exit \$p.ExitCode } catch { exit $CANCELLED_EXIT }"
+        // O script vai codificado (UTF-16LE em base64): aspas e espaços no caminho do programa
+        // não se perdem na linha de comando, como acontecia ao passá-lo com -Command.
+        val encoded = Base64.getEncoder().encodeToString(script.toByteArray(Charsets.UTF_16LE))
         return try {
-            val process = ProcessBuilder("powershell.exe", "-NoProfile", "-NonInteractive", "-Command", script)
+            val process = ProcessBuilder("powershell.exe", "-NoProfile", "-NonInteractive", "-EncodedCommand", encoded)
                 .redirectErrorStream(true)
                 .start()
             process.inputStream.bufferedReader().readText()
@@ -82,7 +86,7 @@ class WindowsSetup(
     private fun psQuote(value: String) = "'" + value.replace("'", "''") + "'"
 
     private companion object {
-        const val RULE_NAME = "Virtual Wheel Racing"
+        const val RULE_NAME = "VirtualWheelRacing" // sem espaços: o netsh não aceita nome com espaço sem aspas
         const val CANCELLED_EXIT = 1223 // mesmo código do Windows para "cancelado pelo usuário"
     }
 }

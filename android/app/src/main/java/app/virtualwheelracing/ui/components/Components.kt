@@ -185,19 +185,6 @@ fun DrawScope.drawSliders(color: Color) {
     }
 }
 
-/** Logo do Virtual Wheel Racing (opção A): volante cujos raios formam um V, com o centro em branco. */
-fun DrawScope.drawLogo() {
-    val u = size.width / 100f
-    val s = Stroke(width = 9f * u, cap = StrokeCap.Round, join = StrokeJoin.Round)
-    drawCircle(Palette.Amber, radius = 38f * u, center = Offset(50f * u, 50f * u), style = s)
-    val v = Path().apply {
-        moveTo(19f * u, 33f * u)
-        lineTo(50f * u, 68f * u)
-        lineTo(81f * u, 33f * u)
-    }
-    drawPath(v, Palette.Amber, style = s)
-    drawCircle(Palette.Text, radius = 7f * u, center = Offset(50f * u, 68f * u))
-}
 
 fun DrawScope.drawMonitor(color: Color) {
     val w = size.width

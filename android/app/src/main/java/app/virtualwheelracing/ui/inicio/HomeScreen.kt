@@ -1,6 +1,7 @@
 package app.virtualwheelracing.ui.inicio
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -22,9 +23,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import app.virtualwheelracing.R
 import app.virtualwheelracing.domain.GlobalSettings
 import app.virtualwheelracing.domain.SensorStats
 import app.virtualwheelracing.protocol.PairingPayload
@@ -33,7 +36,6 @@ import app.virtualwheelracing.ui.components.VwrCard
 import app.virtualwheelracing.ui.components.drawChevronRight
 import app.virtualwheelracing.ui.components.drawMonitor
 import app.virtualwheelracing.ui.components.drawSliders
-import app.virtualwheelracing.ui.components.drawLogo
 import app.virtualwheelracing.ui.theme.Fonts
 import app.virtualwheelracing.ui.theme.Palette
 import kotlin.math.roundToInt
@@ -57,12 +59,12 @@ fun HomeScreen(
         verticalArrangement = Arrangement.spacedBy(14.dp),
     ) {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-            Canvas(Modifier.size(34.dp)) { drawLogo() }
+            Image(painterResource(R.drawable.logo_tile), contentDescription = null, modifier = Modifier.size(40.dp))
             Text(
                 "Virtual Wheel Racing",
                 fontFamily = Fonts.Display,
                 fontWeight = FontWeight.Bold,
-                fontSize = 26.sp,
+                fontSize = 24.sp,
                 color = Palette.Text,
                 modifier = Modifier.weight(1f),
             )
@@ -141,7 +143,7 @@ private fun LinkCard(title: String, subtitle: String, action: String?, onClick: 
                 Text(subtitle, fontSize = 13.sp, color = Palette.Muted)
             }
             if (action != null) {
-                Text(action, fontSize = 14.sp, fontWeight = FontWeight.SemiBold, color = Palette.Amber)
+                Text(action, fontSize = 14.sp, fontWeight = FontWeight.SemiBold, color = Palette.AccentText)
             } else {
                 Canvas(Modifier.size(18.dp)) { drawChevronRight(Palette.Muted) }
             }

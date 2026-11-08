@@ -1,6 +1,6 @@
 package app.virtualwheelracing.desktop.ui
 
-import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -33,6 +33,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.painter.BitmapPainter
+import androidx.compose.ui.res.loadImageBitmap
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -103,13 +105,14 @@ fun MainScreen(container: DesktopContainer) {
 
 @Composable
 private fun Sidebar(selected: Section, checksOk: Boolean, connected: Boolean, onSelect: (Section) -> Unit) {
+    val logo = remember { Fonts::class.java.getResourceAsStream("/icon.png")?.use { BitmapPainter(loadImageBitmap(it)) } }
     Column(
         modifier = Modifier.width(232.dp).fillMaxHeight().background(Palette.Sidebar).padding(horizontal = 16.dp, vertical = 24.dp),
         verticalArrangement = Arrangement.spacedBy(6.dp),
     ) {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp), modifier = Modifier.padding(start = 8.dp, bottom = 18.dp)) {
-            Canvas(Modifier.size(30.dp)) { drawLogo() }
-            Text("Virtual Wheel Racing", fontFamily = Fonts.Display, fontWeight = FontWeight.Bold, fontSize = 24.sp, color = Palette.Text)
+            logo?.let { Image(it, contentDescription = null, modifier = Modifier.size(36.dp)) }
+            Text("Virtual Wheel Racing", fontFamily = Fonts.Display, fontWeight = FontWeight.Bold, fontSize = 19.sp, lineHeight = 21.sp, color = Palette.Text)
         }
         Section.entries.forEach { item ->
             val active = item == selected
@@ -135,7 +138,7 @@ private fun Sidebar(selected: Section, checksOk: Boolean, connected: Boolean, on
                     modifier = Modifier.weight(1f),
                 )
                 badge?.let {
-                    Text(it, color = if (item == Section.VERIFICACAO) Palette.Amber else Palette.Throttle, fontWeight = FontWeight.Bold)
+                    Text(it, color = if (item == Section.VERIFICACAO) Palette.Warning else Palette.Throttle, fontWeight = FontWeight.Bold)
                 }
             }
         }
@@ -148,10 +151,10 @@ private fun PainelSection(container: DesktopContainer, snapshot: app.virtualwhee
     Row(horizontalArrangement = Arrangement.spacedBy(20.dp)) {
         Panel("Celular", Modifier.weight(1f)) {
             val (text, fg, bg) = when {
-                !snapshot.connected && snapshot.peer != null -> Triple("Pareado (${snapshot.peer}), aguardando dados", Palette.Amber, Palette.WarnBackground)
+                !snapshot.connected && snapshot.peer != null -> Triple("Pareado (${snapshot.peer}), aguardando dados", Palette.Warning, Palette.WarnBackground)
                 !snapshot.connected -> Triple("Aguardando o celular", Palette.Muted, Palette.Surface2)
                 snapshot.health == LinkHealth.OK -> Triple("Conectado a ${snapshot.peer ?: "celular"}", Palette.Throttle, Palette.OkBackground)
-                snapshot.health == LinkHealth.WARNING -> Triple("Sinal instável", Palette.Amber, Palette.WarnBackground)
+                snapshot.health == LinkHealth.WARNING -> Triple("Sinal instável", Palette.Warning, Palette.WarnBackground)
                 else -> Triple("Sem sinal · failsafe ativo", Palette.Brake, Palette.ErrorBackground)
             }
             Pill(text, fg, bg)
@@ -169,7 +172,7 @@ private fun PainelSection(container: DesktopContainer, snapshot: app.virtualwhee
         }
     }
     Panel("Entradas ao vivo", Modifier.fillMaxWidth()) {
-        AxisBar("Direção", snapshot.steering, centered = true, color = Palette.Amber)
+        AxisBar("Direção", snapshot.steering, centered = true, color = Palette.Accent)
         Row(horizontalArrangement = Arrangement.spacedBy(20.dp)) {
             Box(Modifier.weight(1f)) { AxisBar("Acelerador", snapshot.throttle, centered = false, color = Palette.Throttle) }
             Box(Modifier.weight(1f)) { AxisBar("Freio", snapshot.brake, centered = false, color = Palette.Brake) }
@@ -278,7 +281,7 @@ private fun VerificacaoSection(container: DesktopContainer, checks: Checks, onCh
         )
         CheckRow(container.startError ?: "Recebendo na porta ${container.port}", checks.portOk, fix = null, busy = busy, onFix = {})
         Label("As correções pedem permissão de administrador pelo aviso do Windows.")
-        busy?.let { Text("$it… confirme no aviso do Windows.", color = Palette.Amber, fontSize = 14.sp) }
+        busy?.let { Text("$it… confirme no aviso do Windows.", color = Palette.Warning, fontSize = 14.sp) }
         message?.let { Text(it, color = Palette.Muted, fontSize = 14.sp) }
     }
 }
@@ -290,7 +293,7 @@ private fun CheckRow(text: String, ok: Boolean, fix: String?, busy: String?, onF
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        Text(if (ok) "OK" else "!", color = if (ok) Palette.Throttle else Palette.Amber, fontWeight = FontWeight.Bold, modifier = Modifier.width(28.dp))
+        Text(if (ok) "OK" else "!", color = if (ok) Palette.Throttle else Palette.Warning, fontWeight = FontWeight.Bold, modifier = Modifier.width(28.dp))
         Text(text, fontSize = 15.sp, color = Palette.Text, modifier = Modifier.weight(1f))
         if (!ok && fix != null) {
             Button(onClick = onFix, enabled = busy == null) { Text(fix) }
