@@ -39,6 +39,34 @@ Leia o [docs/arquitetura.md](docs/arquitetura.md). Em resumo:
    ```
 4. Descreva no pull request o que mudou, por quê e como você testou (jogo, celular, versão do Windows).
 
+## Mensagens de commit
+
+O projeto segue o padrão [Conventional Commits](https://www.conventionalcommits.org/pt-br/v1.0.0/), com a **descrição em inglês**:
+
+```
+tipo(escopo opcional): descrição curta no imperativo, em inglês
+
+Corpo opcional explicando o porquê.
+```
+
+| Tipo | Quando usar | Exemplo |
+|---|---|---|
+| `feat` | Função nova para quem usa | `feat(android): add vibration on kerbs` |
+| `fix` | Correção de bug | `fix(desktop): quote program path in firewall rule` |
+| `refactor` | Mudança de código sem mudar o comportamento | `refactor(protocol): extract packet header writer` |
+| `perf` | Melhoria de desempenho | `perf(engine): avoid allocation when sending state` |
+| `test` | Testes novos ou corrigidos | `test(receiver): cover heartbeat timeout` |
+| `docs` | Só documentação | `docs: add ETS2 setup guide` |
+| `build` | Gradle, dependências, instalador | `build: bump Compose Multiplatform to 1.9.1` |
+| `ci` | GitHub Actions | `ci: cache Gradle between runs` |
+| `chore` | Manutenção que não entra nas outras | `chore: update third-party license list` |
+
+**Escopos usados:** `android`, `engine`, `desktop`, `receiver`, `vjoy`, `protocol`, `domain`, `pairing`, `ui`, `installer`.
+
+**Mudança que quebra compatibilidade** (por exemplo, um formato de pacote ou de QR que versões antigas não entendem): coloque `!` depois do tipo, como em `feat(protocol)!: add packet version 2`, e explique no corpo com `BREAKING CHANGE:`.
+
+Os commits anteriores a 8/nov/2026 não seguem esse padrão; ele vale daqui para frente.
+
 ## Estilo
 
 - Kotlin no estilo oficial (`kotlin.code.style=official`).

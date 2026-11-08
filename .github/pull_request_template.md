@@ -1,3 +1,5 @@
+<!-- Título do pull request no padrão Conventional Commits, em inglês. Ex.: "fix(desktop): quote program path in firewall rule" -->
+
 ## O que muda
 
 <!-- Descreva a mudança e o motivo. Se resolve uma issue, escreva "Resolve #número". -->
