@@ -6,3 +6,7 @@ local.properties
 *.iml
 captures/
 .DS_Store
+
+# Estudo de viabilidade e notas de pesquisa: ficam só no PC do mantenedor
+research_notes/
+reports/
