@@ -26,19 +26,19 @@ dependencies {
 
 compose.desktop {
     application {
-        mainClass = "app.volapex.desktop.MainKt"
+        mainClass = "app.virtualwheelracing.desktop.MainKt"
         nativeDistributions {
             targetFormats(TargetFormat.Msi)
-            packageName = "Volapex"
+            packageName = "Virtual Wheel Racing"
             packageVersion = "0.1.0"
             description = "Volante virtual com o celular"
-            vendor = "Volapex"
+            vendor = "Virtual Wheel Racing"
             // O instalador do vJoy (MIT, assinado por Justin Shafer) vai junto, em resources/windows.
             appResourcesRootDir.set(project.layout.projectDirectory.dir("resources"))
             includeAllModules = true
             windows {
-                iconFile.set(project.layout.projectDirectory.file("icons/volapex.ico"))
-                menuGroup = "Volapex"
+                iconFile.set(project.layout.projectDirectory.file("icons/icon.ico"))
+                menuGroup = "Virtual Wheel Racing"
                 shortcut = true
                 dirChooser = true
                 // Fixo para sempre: permite que versões novas substituam as antigas.

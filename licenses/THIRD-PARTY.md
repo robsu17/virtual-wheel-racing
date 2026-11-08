@@ -1,6 +1,6 @@
 # Componentes de terceiros
 
-Componentes distribuídos junto com o Volapex. Antes de publicar, confira cada licença na fonte original.
+Componentes distribuídos junto com o Virtual Wheel Racing. Antes de publicar, confira cada licença na fonte original.
 
 | Componente | Onde entra | Licença | Fonte |
 |---|---|---|---|

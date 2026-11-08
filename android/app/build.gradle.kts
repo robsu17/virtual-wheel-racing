@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "app.volapex"
+    namespace = "app.virtualwheelracing"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "app.volapex"
+        applicationId = "app.virtualwheelracing"
         minSdk = 29
         targetSdk = 36
         versionCode = 1

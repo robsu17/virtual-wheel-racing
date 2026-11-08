@@ -25,6 +25,6 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
-    // O teste de contrato com o vJoy real só roda com: gradlew :desktop:vjoy:test -Pvolapex.vjoy=true
-    systemProperty("volapex.vjoy", providers.gradleProperty("volapex.vjoy").getOrElse("false"))
+    // O teste de contrato com o vJoy real só roda com: gradlew :desktop:vjoy:test -Pvwr.vjoy=true
+    systemProperty("vwr.vjoy", providers.gradleProperty("vwr.vjoy").getOrElse("false"))
 }

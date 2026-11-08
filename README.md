@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="desktop/app/icons/volapex-256.png" width="120" alt="Logo do Volapex: volante cujos raios formam um V">
+  <img src="desktop/app/icons/icon-256.png" width="120" alt="Logo do Virtual Wheel Racing: volante cujos raios formam um V">
 </p>
 
-<h1 align="center">Volapex</h1>
+<h1 align="center">Virtual Wheel Racing</h1>
 
 <p align="center">Transforma o celular Android em um volante para jogos de corrida e de caminhão no PC.</p>
 
@@ -65,7 +65,7 @@ gradlew.bat test
 Rodar também o teste de contrato contra o vJoy real (mexe no volante virtual):
 
 ```bash
-gradlew.bat :desktop:vjoy:test -Pvolapex.vjoy=true
+gradlew.bat :desktop:vjoy:test -Pvwr.vjoy=true
 ```
 
 Abrir o programa do Windows em modo de desenvolvimento:
@@ -93,11 +93,11 @@ gradlew.bat :desktop:app:packageMsi
 | Saída | Caminho |
 |---|---|
 | APK de depuração | `android/app/build/outputs/apk/debug/app-debug.apk` |
-| Instalador do Windows | `desktop/app/build/compose/binaries/main/msi/Volapex-0.1.0.msi` |
+| Instalador do Windows | `desktop/app/build/compose/binaries/main/msi/Virtual Wheel Racing-0.1.0.msi` |
 
 ## Usando
 
-1. **No PC:** instale o `Volapex-0.1.0.msi` e abra o Volapex. Na **Verificação do PC**, use os botões para instalar o vJoy, configurar o dispositivo e liberar o firewall, até todos os itens ficarem OK.
+1. **No PC:** instale o `Virtual Wheel Racing-0.1.0.msi` e abra o Virtual Wheel Racing. Na **Verificação do PC**, use os botões para instalar o vJoy, configurar o dispositivo e liberar o firewall, até todos os itens ficarem OK.
 2. **No celular:** abra o app, toque em **Ler código QR** e aponte para o código na seção **Conectar celular** do PC. O celular lembra do PC nas próximas vezes.
 3. **No celular:** toque em **Calibrar** uma vez, para testar o sensor, e depois em **Começar a dirigir**.
 4. **No jogo:** nas opções de controle, escolha o **vJoy Device**. Use os botões **Atribuir** da tela de direção para mexer um eixo por vez enquanto o jogo pede cada controle (eixo X = direção, Y = acelerador, Z = freio, botões 1 a 16). Deixe a zona morta do jogo em 0%.
@@ -109,7 +109,7 @@ Celular e PC precisam estar na mesma rede, de preferência Wi-Fi de 5 GHz com o 
 | Jogo | Situação |
 |---|---|
 | rFactor 1 | Validado: sem inverter eixos, sem atraso perceptível |
-| Euro Truck Simulator 2, American Truck Simulator, Assetto Corsa, BeamNG.drive | Alvos principais, ainda não testados com o Volapex |
+| Euro Truck Simulator 2, American Truck Simulator, Assetto Corsa, BeamNG.drive | Alvos principais, ainda não testados com o Virtual Wheel Racing |
 | F1, EA WRC, Forza Horizon, GTA V | Fora de foco por enquanto (anti-cheat ou só aceitam controle de Xbox) |
 
 A matriz completa, com as fontes, está em [reports/Volante virtual com celular.md](reports/Volante%20virtual%20com%20celular.md).

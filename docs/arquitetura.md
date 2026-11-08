@@ -1,4 +1,4 @@
-# Arquitetura do Volapex
+# Arquitetura do Virtual Wheel Racing
 
 Versão 1 · 7 de novembro de 2026 · antes do primeiro código
 
@@ -45,7 +45,7 @@ A regra de dependência é sempre de fora para dentro: telas e adaptadores depen
 Um único repositório Gradle com vários módulos:
 
 ```
-volapex/
+vwr/
 ├─ build-logic/          convenções de build (versão do Kotlin, alvo da JVM, lint)
 ├─ shared/
 │  ├─ domain/            Kotlin/JVM puro — entidades, regras e portas
@@ -260,7 +260,7 @@ Não existe `GameProfile`: a configuração é universal.
 | `ClientHandshake` / `ServerHandshake` | HELLO e WELCOME assinados com a chave do QR, com um nonce de 64 bits de cada lado; o PC recusa HELLO repetido |
 | `SessionKeys` | chave da sessão = HMAC(chave do QR, sessão + nonce do celular + nonce do PC); STATE, BYE e HEARTBEAT usam só ela |
 | `SequenceGuard` | descarta `seq` antigo ou repetido |
-| `PairingPayload` | conteúdo do QR (`volapex:1?n=…&h=…&p=…&k=…`): nome do PC, até 8 endereços, porta e chave de 128 bits |
+| `PairingPayload` | conteúdo do QR (`vwr:1?n=…&h=…&p=…&k=…`): nome do PC, até 8 endereços, porta e chave de 128 bits |
 
 O celular repete o HELLO a cada 250 ms, para todos os endereços do QR, até receber um WELCOME; depois fala só com o endereço que respondeu. O PC manda HEARTBEAT a cada 500 ms; sem heartbeat por 2 s, o celular volta a procurar. Do lado do PC, 3 s sem pacotes encerram a sessão.
 
@@ -332,7 +332,7 @@ O protótipo de ponta a ponta segue esta arquitetura, com simplificações consc
 | ~~Programa do Windows sem o visual do design~~ | resolvido em 7/nov: barra lateral com Painel, Conectar celular e Verificação do PC | — |
 | Instalador MSI sem ações próprias | o jpackage não roda passos extras na instalação | a Verificação do PC instala o vJoy que vem junto, configura o dispositivo 1 e libera o firewall, cada um com o aviso de administrador do Windows; um instalador único (Inno Setup ou WiX com ações) fica para o beta |
 | Instalador e app sem assinatura digital | sem certificado ainda | certificado OV; até lá, o Windows mostra o aviso do SmartScreen |
-| Regra de bloqueio do firewall não é detectada | se o usuário recusou o aviso do Windows antes, a regra de bloqueio vence | detectar e remover regras de bloqueio do Volapex |
+| Regra de bloqueio do firewall não é detectada | se o usuário recusou o aviso do Windows antes, a regra de bloqueio vence | detectar e remover regras de bloqueio do Virtual Wheel Racing |
 | Atalhos "Atribuir" ficam na tela Dirigir, não na Início | precisam de uma sessão aberta com o PC | rever se o teste com usuários pedir |
 
 ## 14. O que ainda está em aberto
@@ -340,4 +340,4 @@ O protótipo de ponta a ponta segue esta arquitetura, com simplificações consc
 - **Medidas:** atraso real e pausas de GC só serão conhecidos no protótipo.
 - **Biblioteca de UDP no Android:** `DatagramSocket` comum é o ponto de partida; alternativas só se a medição pedir.
 - **Instalador do Windows:** `jpackage` gera o MSI com o Java embarcado; o encadeamento do instalador do vJoy e da regra de firewall será definido junto com o RF-14.
-- **Nome dos pacotes Kotlin:** depende do nome definitivo do app; até lá, `app.volapex`.
+- **Nome dos pacotes Kotlin:** depende do nome definitivo do app; até lá, `app.virtualwheelracing`.
