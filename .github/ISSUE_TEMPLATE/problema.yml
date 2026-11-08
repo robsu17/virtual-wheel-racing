@@ -1,0 +1,47 @@
+name: Relatar um problema
+description: Algo não funciona como deveria.
+title: "[Problema] "
+labels: ["bug"]
+body:
+  - type: textarea
+    id: oque
+    attributes:
+      label: O que aconteceu
+      description: E o que você esperava que acontecesse.
+    validations:
+      required: true
+  - type: textarea
+    id: passos
+    attributes:
+      label: Passos para reproduzir
+      placeholder: |
+        1. Abri o app e toquei em Começar a dirigir
+        2. ...
+    validations:
+      required: true
+  - type: dropdown
+    id: onde
+    attributes:
+      label: Onde acontece
+      options:
+        - App Android
+        - Programa do Windows
+        - Instalador do Windows
+        - Conexão entre os dois
+  - type: input
+    id: versoes
+    attributes:
+      label: Versões
+      placeholder: "App 0.1.1, Windows 11 24H2, Android 16, vJoy 2.1.9.1"
+    validations:
+      required: true
+  - type: input
+    id: celular
+    attributes:
+      label: Modelo do celular
+  - type: textarea
+    id: registros
+    attributes:
+      label: Mensagens de erro ou registros
+      description: Texto em vermelho na tela, códigos de erro, ou a saída do `adb logcat`, se tiver.
+      render: text

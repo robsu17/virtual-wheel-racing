@@ -1,0 +1,58 @@
+name: Compatibilidade de jogo
+description: Conte como o Virtual Wheel Racing se saiu em um jogo, funcionando ou não.
+title: "[Jogo] "
+labels: ["compatibilidade"]
+body:
+  - type: input
+    id: jogo
+    attributes:
+      label: Jogo e versão
+      placeholder: "Euro Truck Simulator 2 1.53"
+    validations:
+      required: true
+  - type: dropdown
+    id: resultado
+    attributes:
+      label: Funcionou?
+      options:
+        - Sim, sem ajustes
+        - Sim, com ajustes (descreva abaixo)
+        - Em parte
+        - Não
+    validations:
+      required: true
+  - type: checkboxes
+    id: controles
+    attributes:
+      label: O que funcionou no jogo
+      options:
+        - label: O jogo reconheceu o vJoy Device
+        - label: Direção (eixo X)
+        - label: Acelerador (eixo Y)
+        - label: Freio (eixo Z)
+        - label: Botões
+  - type: textarea
+    id: ajustes
+    attributes:
+      label: Ajustes necessários
+      description: Inverter eixo, zona morta, sensibilidade, rotação, onde fica cada opção no jogo.
+  - type: textarea
+    id: sensacao
+    attributes:
+      label: Sensação ao dirigir
+      description: Atraso perceptível, tremor, direção rápida ou lenta demais.
+  - type: input
+    id: celular
+    attributes:
+      label: Celular e versão do Android
+      placeholder: "Poco X8 Pro, Android 16"
+  - type: input
+    id: windows
+    attributes:
+      label: Windows e versões do app
+      placeholder: "Windows 11 24H2, app 0.1.1, vJoy 2.1.9.1"
+  - type: input
+    id: antitrapaca
+    attributes:
+      label: Modo online ou anti-trapaça
+      description: Testou online? O jogo reclamou de algum programa?

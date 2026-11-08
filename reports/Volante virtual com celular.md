@@ -12,7 +12,7 @@ Estas decisões foram tomadas em 7 de novembro de 2026, depois da pesquisa, e o 
 | Stack móvel | Kotlin + Jetpack Compose | Sem React Native; uma linguagem só, com o motor em módulo e thread próprios |
 | Stack do PC | Kotlin + Compose for Desktop | Mesma linguagem do celular, com protocolo compartilhado; instalador maior por levar o Java; pausas de GC a medir |
 | Celular de teste | Poco X8 Pro, Android 16 | Taxa do sensor e comportamento do sistema da Xiaomi medidos nesse aparelho |
-| Licença | Código fechado | Sem código GPL; referências MIT com aviso de licença; certificado OV no Windows |
+| Licença | Código aberto, GPL-3.0 (antes fechado) | Código GPL de outros projetos pode ser aproveitado; referências MIT com aviso de licença; assinatura gratuita pela SignPath Foundation possível |
 | Driver no PC | vJoy | Sem backend XInput; o app depende de um único driver, com versão ainda a definir |
 | Jogos | F1 fora de foco | Some o maior risco de anti-cheat; EA WRC, Forza Horizon e GTA V também saem do MVP |
 | Configuração | Universal, sem perfis por jogo | Um volante genérico com ajustes globais; a pessoa mapeia eixos, botões e rotação dentro de cada jogo |
@@ -113,7 +113,7 @@ A prioridade é **MVP** ou **Posterior**, com a fase do roteiro entre parêntese
 | RNF-15 | Energia e calor | Tela ligada por `FLAG_KEEP_SCREEN_ON`; `getThermalHeadroom` no máx. 1× a cada 10 s; háptico com ajuste de intensidade | MVP |
 | RNF-16 | Ergonomia | Sessões de teste de ≥ 20 min; apoio de cotovelo orientado no guia | MVP |
 | RNF-17 | Honestidade | Metodologia de latência publicada; lista pública por jogo; modo online "por conta do usuário" | MVP |
-| RNF-18 | Licenças e marca | Avisos MIT; sem código GPL em versão fechada; nome distinto | MVP |
+| RNF-18 | Licenças e marca | Projeto sob GPL-3.0; avisos de licença de terceiros; nome distinto | MVP |
 
 ## A arquitetura recomendada separa o celular do driver por um protocolo próprio
 

@@ -1,0 +1,20 @@
+name: Sugestão
+description: Uma ideia para o Virtual Wheel Racing.
+title: "[Sugestão] "
+labels: ["melhoria"]
+body:
+  - type: textarea
+    id: problema
+    attributes:
+      label: Que problema isso resolve
+      description: Conte a situação em que você sentiu falta disso.
+    validations:
+      required: true
+  - type: textarea
+    id: ideia
+    attributes:
+      label: Como você imagina a solução
+  - type: textarea
+    id: alternativas
+    attributes:
+      label: Alternativas que você considerou

@@ -1,80 +1,84 @@
 <p align="center">
-  <img src="desktop/app/icons/icon-256.png" width="120" alt="Logo do Virtual Wheel Racing: volante cujos raios formam um V">
+  <img src="desktop/app/icons/icon-256.png" width="120" alt="Virtual Wheel Racing logo: black racing wheel with red grips">
 </p>
 
 <h1 align="center">Virtual Wheel Racing</h1>
 
-<p align="center">Transforma o celular Android em um volante para jogos de corrida e de caminhão no PC.</p>
+<p align="center">Turn your Android phone into a steering wheel for PC racing and truck games.</p>
+
+<p align="center">
+  <strong>English</strong> · <a href="README.pt-BR.md">Português</a> · <a href="LICENSE">GPL-3.0 license</a> · <a href="CONTRIBUTING.md">Contributing</a>
+</p>
 
 ---
 
-O celular, segurado como um volante, envia pela rede Wi-Fi a direção, os pedais e os botões. O programa do Windows recebe e repassa tudo para um volante virtual ([vJoy](https://github.com/jshafer817/vJoy)), que os jogos enxergam como um controle comum. Cada pessoa configura os controles dentro de cada jogo, como faria com um volante comprado.
+Hold your phone like a steering wheel: it sends steering, pedals and buttons over Wi-Fi. The Windows app receives them and feeds a virtual joystick ([vJoy](https://github.com/jshafer817/vJoy)) that games see as a regular controller. You map the controls inside each game, just like with a real wheel.
 
-> **Status:** protótipo funcional (versão 0.1.0). Validado com rFactor 1 em um Poco X8 Pro (Android 16) e Windows 11 com o vJoy 2.1.9.1. Código fechado.
+> **Status:** working prototype (version 0.1.1). Validated with rFactor 1 on a Poco X8 Pro (Android 16) and Windows 11 with vJoy 2.1.9.1. Open source under GPL-3.0 — testing on other games and phones is the most valuable contribution right now.
 
-## Como funciona
+## How it works
 
 ```
- Celular (Android)                                  PC (Windows)
- sensor de rotação ─┐                         ┌─► sessão autenticada ─► vJoy ─► jogo
- pedais e botões ───┴─► pacote UDP assinado ──┘     failsafe: solta pedais e
-                        até 200 vezes por segundo   centraliza se a rede cair
+ Phone (Android)                                     PC (Windows)
+ rotation sensor ─┐                            ┌─► authenticated session ─► vJoy ─► game
+ pedals, buttons ─┴─► signed UDP packet ───────┘     failsafe: releases pedals and
+                      up to 200 times per second     centers steering if the link drops
 ```
 
-- **Direção:** o ângulo vem da fusão de sensores do próprio Android, a 200 Hz, filtrado pelo One Euro Filter.
-- **Pedais:** freio e acelerador são faixas laterais da tela, controladas pela posição do polegar.
-- **Pareamento:** o celular lê um código QR mostrado no PC, com uma chave aleatória de 128 bits. Cada conexão abre uma sessão com chave própria.
-- **Segurança na pista:** sem pacotes por 100 ms, o PC solta os pedais; por 500 ms, centraliza a direção.
+- **Steering:** the angle comes from Android's own sensor fusion at 200 Hz, smoothed by a One Euro Filter.
+- **Pedals:** brake and throttle are strips on the screen edges, driven by thumb position.
+- **Pairing:** the phone scans a QR code shown on the PC, carrying a random 128-bit key. Each connection opens a session with its own key.
+- **Track safety:** after 100 ms without packets the PC releases the pedals; after 500 ms it centers the steering.
 
-Detalhes em [docs/arquitetura.md](docs/arquitetura.md).
+The full design (in Portuguese) is in [docs/arquitetura.md](docs/arquitetura.md).
 
-## Estrutura do repositório
+## Repository layout
 
-| Pasta | O que tem |
+| Folder | Contents |
 |---|---|
-| `shared/domain` | Regras puras: cálculo do ângulo, filtro, curvas, failsafe, estatísticas do sensor |
-| `shared/protocol` | Formato do pacote de 32 bytes, HMAC, troca de chaves e código QR |
-| `android/engine` | Motor de tempo real do celular: sensor, rede, sessão |
-| `android/app` | Telas do app Android (Jetpack Compose) |
-| `desktop/receiver` | Recepção UDP, sessão, watchdog e estatísticas no PC |
-| `desktop/vjoy` | Único módulo que conversa com o vJoy (via JNA) |
-| `desktop/app` | Programa do Windows (Compose for Desktop), verificação do PC e instalador |
-| `docs/` | Arquitetura e decisões técnicas |
-| `reports/`, `research_notes/` | Estudo de viabilidade que originou o projeto |
-| `spikes/` | Experimentos descartáveis (como o script de teste do vJoy) |
-| `licenses/` | Licenças de fontes e componentes de terceiros |
+| `shared/domain` | Pure rules: angle math, filter, curves, failsafe, sensor statistics |
+| `shared/protocol` | 32-byte packet format, HMAC, key exchange and QR code |
+| `android/engine` | Phone real-time engine: sensor, network, session |
+| `android/app` | Android screens (Jetpack Compose) |
+| `desktop/receiver` | UDP receiver, session, watchdog and statistics on the PC |
+| `desktop/vjoy` | The only module that talks to vJoy (via JNA) |
+| `desktop/app` | Windows app (Compose for Desktop), PC check and installer |
+| `docs/` | Architecture and technical decisions |
+| `reports/`, `research_notes/` | Feasibility study behind the project |
+| `spikes/` | Throwaway experiments (such as the vJoy test script) |
+| `licenses/` | Licenses of fonts and third-party components |
 
-## Pré-requisitos para desenvolver
+## Development requirements
 
-- **Windows 10 ou 11** (o receptor e o vJoy só existem no Windows)
-- **JDK 17** (`JAVA_HOME` apontando para ele)
-- **Android SDK** com a plataforma 36, configurado em `local.properties` (`sdk.dir=...`)
-- **vJoy 2.1.9.1**, para testar com jogos (o programa também instala, pela tela de Verificação)
-- Um celular **Android 10 ou mais novo** com giroscópio, e a depuração USB ativada para instalar pelo cabo
+- **Windows 10 or 11** (the receiver and vJoy are Windows-only)
+- **JDK 17** (`JAVA_HOME` pointing to it)
+- **Android SDK** with platform 36, set in `local.properties` (`sdk.dir=...`)
+- **vJoy 2.1.9.1** to test with games (the app can also install it from the PC check screen)
+- An **Android 10+** phone with a gyroscope, with USB debugging enabled to install over a cable
 
-O Gradle vem pelo wrapper (`gradlew`); não é preciso instalá-lo.
+Gradle comes with the wrapper (`gradlew`); no install needed.
 
-## Comandos
+## Commands
 
-Rodar todos os testes da JVM (domínio, protocolo, receptor):
+Run all JVM tests (domain, protocol, receiver):
 
 ```bash
 gradlew.bat test
 ```
 
-Rodar também o teste de contrato contra o vJoy real (mexe no volante virtual):
+Also run the contract test against the real vJoy driver (moves the virtual wheel):
 
 ```bash
 gradlew.bat :desktop:vjoy:test -Pvwr.vjoy=true
 ```
 
-Abrir o programa do Windows em modo de desenvolvimento:
+Run the Windows app in development mode:
 
 ```bash
 gradlew.bat :desktop:app:run
 ```
 
-Gerar e instalar o app no celular conectado por USB:
+Build and install the app on a phone connected over USB:
 
 ```bash
 gradlew.bat :android:app:assembleDebug
@@ -84,52 +88,52 @@ gradlew.bat :android:app:assembleDebug
 adb install -r android\app\build\outputs\apk\debug\app-debug.apk
 ```
 
-Gerar o instalador do Windows (o WiX é baixado automaticamente na primeira vez):
+Build the Windows installer (WiX is downloaded automatically the first time):
 
 ```bash
 gradlew.bat :desktop:app:packageMsi
 ```
 
-| Saída | Caminho |
+| Output | Path |
 |---|---|
-| APK de depuração | `android/app/build/outputs/apk/debug/app-debug.apk` |
-| Instalador do Windows | `desktop/app/build/compose/binaries/main/msi/Virtual Wheel Racing-0.1.0.msi` |
+| Debug APK | `android/app/build/outputs/apk/debug/app-debug.apk` |
+| Windows installer | `desktop/app/build/compose/binaries/main/msi/Virtual Wheel Racing-0.1.1.msi` |
 
-## Usando
+## Using it
 
-1. **No PC:** instale o `Virtual Wheel Racing-0.1.0.msi` e abra o Virtual Wheel Racing. Na **Verificação do PC**, use os botões para instalar o vJoy, configurar o dispositivo e liberar o firewall, até todos os itens ficarem OK.
-2. **No celular:** abra o app, toque em **Ler código QR** e aponte para o código na seção **Conectar celular** do PC. O celular lembra do PC nas próximas vezes.
-3. **No celular:** toque em **Calibrar** uma vez, para testar o sensor, e depois em **Começar a dirigir**.
-4. **No jogo:** nas opções de controle, escolha o **vJoy Device**. Use os botões **Atribuir** da tela de direção para mexer um eixo por vez enquanto o jogo pede cada controle (eixo X = direção, Y = acelerador, Z = freio, botões 1 a 16). Deixe a zona morta do jogo em 0%.
+1. **On the PC:** install `Virtual Wheel Racing-0.1.1.msi` and open it. In **PC check** (Verificação do PC), use the buttons to install vJoy, configure the device and open the firewall until every item is OK.
+2. **On the phone:** open the app, tap **Read QR code** (Ler código QR) and point it at the code in the PC's **Connect phone** section. The phone remembers the PC afterwards.
+3. **On the phone:** tap **Calibrate** once to test the sensor, then **Start driving**.
+4. **In the game:** pick **vJoy Device** in the control options. Use the **Assign** buttons on the driving screen to move one axis at a time while the game asks for each control (X axis = steering, Y = throttle, Z = brake, buttons 1 to 16). Set the game's deadzone to 0%.
 
-Celular e PC precisam estar na mesma rede, de preferência Wi-Fi de 5 GHz com o PC no cabo. O programa usa a porta **UDP 47820**.
+Phone and PC must be on the same network, ideally 5 GHz Wi-Fi with the PC on a cable. The app uses **UDP port 47820**.
 
-## Jogos
+> The app's interface is in Brazilian Portuguese for now. Translations are welcome.
 
-| Jogo | Situação |
+## Games
+
+| Game | Status |
 |---|---|
-| rFactor 1 | Validado: sem inverter eixos, sem atraso perceptível |
-| Euro Truck Simulator 2, American Truck Simulator, Assetto Corsa, BeamNG.drive | Alvos principais, ainda não testados com o Virtual Wheel Racing |
-| F1, EA WRC, Forza Horizon, GTA V | Fora de foco por enquanto (anti-cheat ou só aceitam controle de Xbox) |
+| rFactor 1 | Validated: no axis inversion, no noticeable lag |
+| Euro Truck Simulator 2, American Truck Simulator, Assetto Corsa, BeamNG.drive | Main targets, not yet tested with Virtual Wheel Racing |
+| F1, EA WRC, Forza Horizon, GTA V | Out of scope for now (anti-cheat, or Xbox controller only) |
 
-A matriz completa, com as fontes, está em [reports/Volante virtual com celular.md](reports/Volante%20virtual%20com%20celular.md).
+Tested another game? Open an issue with the **Game compatibility** template (Compatibilidade de jogo), whether it worked or not — that's how the list grows.
 
-## Limitações conhecidas
+## Known limitations
 
-- O instalador e o app ainda **não têm assinatura digital**; o Windows mostra o aviso do SmartScreen e o APK é de depuração.
-- O instalador não instala o vJoy nem libera o firewall durante a instalação: isso é feito na primeira abertura, pela Verificação do PC.
-- A chave de pareamento fica guardada sem proteção extra (arquivo no PC, preferências no celular).
-- Não há vibração com a pista nem telemetria dos jogos ainda.
+- The installer and the app are **not code-signed** yet; Windows shows a SmartScreen warning and the APK is a debug build.
+- The installer does not install vJoy or open the firewall during setup; that happens on first launch, in the PC check screen.
+- The pairing key is stored without extra protection (a file on the PC, preferences on the phone).
+- No track vibration or game telemetry yet.
+- The QR scanner uses Google Play Services, which is not free software; replacing it with a free scanner is planned.
 
-A lista completa, com o que entra em cada etapa, está na seção 13 de [docs/arquitetura.md](docs/arquitetura.md).
+## Contributing
 
-## Próximos passos
+Contributions are welcome: game and phone testing, bug reports, code and documentation. Read the [contributing guide](CONTRIBUTING.md) and the [code of conduct](CODE_OF_CONDUCT.md) (both in Portuguese for now). Report security issues privately, as described in [SECURITY.md](SECURITY.md). Issues and pull requests in English are welcome.
 
-- Versão release assinada do APK e certificado para o instalador do Windows
-- Beta fechado pela Play Store
-- Vibração por eventos da pista (telemetria ou force feedback do jogo)
-- Testes formais de atraso e de sessões longas
+## License
 
-## Licença
+Virtual Wheel Racing is free software, released under the [GNU General Public License v3.0](LICENSE). You may use, study, modify and redistribute it, including commercially, as long as distributed versions stay open source under the same license.
 
-Código proprietário, todos os direitos reservados. Os componentes de terceiros e suas licenças estão em [licenses/THIRD-PARTY.md](licenses/THIRD-PARTY.md).
+Third-party components keep their own licenses, listed in [licenses/THIRD-PARTY.md](licenses/THIRD-PARTY.md): the vJoy installer (MIT), the fonts (OFL) and Apache 2.0 libraries, all compatible with GPL-3.0.

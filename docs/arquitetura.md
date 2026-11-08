@@ -2,7 +2,7 @@
 
 Versão 1 · 7 de novembro de 2026 · antes do primeiro código
 
-Este documento define a estrutura do código do app Android e do programa do Windows, seguindo arquitetura limpa e os princípios SOLID. Ele parte das decisões já tomadas (Kotlin nos dois lados, só Android, vJoy 2.1.9.1, configuração universal, código fechado) e do estudo em `reports/Volante virtual com celular.md`. Nada aqui foi implementado ou medido; os números de desempenho são metas a validar no protótipo.
+Este documento define a estrutura do código do app Android e do programa do Windows, seguindo arquitetura limpa e os princípios SOLID. Ele parte das decisões já tomadas (Kotlin nos dois lados, só Android, vJoy 2.1.9.1, configuração universal; o código, inicialmente fechado, foi aberto sob a GPL-3.0) e do estudo em `reports/Volante virtual com celular.md`. Nada aqui foi implementado ou medido; os números de desempenho são metas a validar no protótipo.
 
 ## 1. O que a arquitetura precisa garantir
 
