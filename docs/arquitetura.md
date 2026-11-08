@@ -2,7 +2,7 @@
 
 Versão 1 · 7 de novembro de 2026 · antes do primeiro código
 
-Este documento define a estrutura do código do app Android e do programa do Windows, seguindo arquitetura limpa e os princípios SOLID. Ele parte das decisões já tomadas (Kotlin nos dois lados, só Android, vJoy 2.1.9.1, configuração universal; o código, inicialmente fechado, foi aberto sob a GPL-3.0) e do estudo em `reports/Volante virtual com celular.md`. Nada aqui foi implementado ou medido; os números de desempenho são metas a validar no protótipo.
+Este documento define a estrutura do código do app Android e do programa do Windows, seguindo arquitetura limpa e os princípios SOLID. Ele parte das decisões já tomadas (Kotlin nos dois lados, só Android, vJoy 2.1.9.1, configuração universal; o código, inicialmente fechado, foi aberto sob a GPL-3.0) e de um estudo de viabilidade feito antes do código (não publicado; a lista de jogos que saiu dele está em [games.md](games.md)). Nada aqui foi implementado ou medido; os números de desempenho são metas a validar no protótipo.
 
 ## 1. O que a arquitetura precisa garantir
 
@@ -57,7 +57,7 @@ vwr/
 │  ├─ app/               Compose for Desktop, bandeja, injeção de dependências
 │  ├─ receiver/          recepção UDP, sessão, watchdog, estatísticas
 │  └─ vjoy/              adaptador do vJoy via JNA
-├─ spikes/               experimentos descartáveis (vjoy-teste.ps1)
+├─ tools/                ferramentas avulsas (vjoy-teste.ps1: move o vJoy sem o celular)
 └─ docs/
 ```
 
