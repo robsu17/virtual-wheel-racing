@@ -2,7 +2,6 @@ package app.virtualwheelracing.ui.dirigir
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -13,7 +12,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -40,7 +38,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -48,7 +45,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.role
@@ -61,7 +57,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import app.virtualwheelracing.AppContainer
-import app.virtualwheelracing.R
 import app.virtualwheelracing.domain.AxisAssignment
 import app.virtualwheelracing.domain.GlobalSettings
 import app.virtualwheelracing.engine.DrivingSession
@@ -76,6 +71,10 @@ import app.virtualwheelracing.ui.components.drawBack
 import app.virtualwheelracing.ui.theme.Fonts
 import app.virtualwheelracing.ui.theme.Palette
 import kotlinx.coroutines.delay
+import kotlin.math.abs
+import kotlin.math.cos
+import kotlin.math.roundToInt
+import kotlin.math.sin
 
 @Composable
 fun DirigirScreen(container: AppContainer, pairing: PairingPayload, settings: GlobalSettings, setupMode: Boolean = false, onBack: () -> Unit) {
@@ -244,11 +243,7 @@ private fun RowScope.CenterPanel(
             SetupPanel(assignment, onAssignment, Modifier.weight(1f).fillMaxWidth())
         } else {
             Box(Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
-                Image(
-                    painterResource(R.drawable.logo_tile),
-                    contentDescription = "Volante girando junto com o celular",
-                    modifier = Modifier.fillMaxHeight(0.9f).aspectRatio(1f).rotate(snapshot?.phoneDegrees ?: 0f),
-                )
+                SteeringGauge(snapshot?.steering ?: 0f, snapshot?.phoneDegrees ?: 0f, Modifier.fillMaxSize())
                 if (snapshot?.tilted == true) {
                     Text(
                         "Endireite o celular para voltar a virar",
@@ -256,7 +251,7 @@ private fun RowScope.CenterPanel(
                         fontSize = 13.sp,
                         fontWeight = FontWeight.SemiBold,
                         modifier = Modifier
-                            .align(Alignment.BottomCenter)
+                            .align(Alignment.TopCenter)
                             .background(Palette.WarnBackground, RoundedCornerShape(999.dp))
                             .padding(horizontal = 12.dp, vertical = 6.dp),
                     )
@@ -280,6 +275,43 @@ private fun RowScope.CenterPanel(
             }
         }
     }
+}
+
+/** Arco de 180°: o ponto mostra a direção enviada ao jogo; o número, o giro do celular. */
+@Composable
+private fun SteeringGauge(steering: Float, phoneDegrees: Float, modifier: Modifier) {
+    Box(modifier, contentAlignment = Alignment.BottomCenter) {
+        Canvas(
+            Modifier
+                .fillMaxSize()
+                .semantics { contentDescription = "Direção em ${(steering * 100).roundToInt()} por cento" },
+        ) {
+            val stroke = 14.dp.toPx()
+            val radius = minOf(size.width / 2f, size.height) - stroke
+            val center = Offset(size.width / 2f, size.height - stroke / 2f)
+            val topLeft = Offset(center.x - radius, center.y - radius)
+            val arcSize = Size(radius * 2, radius * 2)
+            drawArc(Palette.Line, 180f, 180f, false, topLeft, arcSize, style = Stroke(stroke, cap = StrokeCap.Round))
+            drawArc(Palette.Accent, -90f, steering * 90f, false, topLeft, arcSize, style = Stroke(stroke, cap = StrokeCap.Round))
+            val angle = Math.toRadians((-90.0 + steering * 90.0))
+            val knob = Offset(center.x + radius * cos(angle).toFloat(), center.y + radius * sin(angle).toFloat())
+            drawCircle(Palette.Background, radius = 13.dp.toPx(), center = knob)
+            drawCircle(Palette.Text, radius = 10.dp.toPx(), center = knob)
+        }
+        Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(bottom = 6.dp)) {
+            Text(formatDegrees(phoneDegrees), fontFamily = Fonts.Display, fontWeight = FontWeight.Bold, fontSize = 44.sp, color = Palette.Text)
+            Text(
+                "giro do celular · direção ${(steering * 100).roundToInt()}%",
+                fontSize = 12.sp,
+                color = Palette.Muted,
+            )
+        }
+    }
+}
+
+private fun formatDegrees(degrees: Float): String {
+    val rounded = degrees.roundToInt()
+    return (if (rounded < 0) "−" else "") + abs(rounded) + "°"
 }
 
 private const val BUTTONS_PER_PAGE = 4
