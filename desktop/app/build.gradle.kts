@@ -30,7 +30,7 @@ compose.desktop {
         nativeDistributions {
             targetFormats(TargetFormat.Msi)
             packageName = "Virtual Wheel Racing"
-            packageVersion = "0.1.1"
+            packageVersion = "0.1.2"
             description = "Volante virtual com o celular"
             vendor = "Virtual Wheel Racing"
             // O instalador do vJoy (MIT, assinado por Justin Shafer) vai junto, em resources/windows.

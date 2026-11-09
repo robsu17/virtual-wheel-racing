@@ -21,7 +21,7 @@
 
 Segure o celular como um volante: ele envia direção, pedais e botões pela sua rede Wi-Fi. O programa do Windows repassa tudo para um controle virtual ([vJoy](https://github.com/jshafer817/vJoy)), que os jogos enxergam como um volante comum. Sem hardware extra, sem conta, sem internet.
 
-> **Status:** primeira versão pública (0.1.1). Validado no rFactor com um Poco X8 Pro (Android 16) e Windows 11. Testes em outros jogos e celulares são a ajuda mais valiosa agora.
+> **Status:** versão atual: 0.1.2, com telas mais simples. Validado no rFactor com um Poco X8 Pro (Android 16) e Windows 11. Testes em outros jogos e celulares são a ajuda mais valiosa agora.
 
 ## Download
 

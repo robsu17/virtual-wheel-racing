@@ -21,7 +21,7 @@
 
 Hold your phone like a steering wheel: it sends steering, pedals and buttons over your local Wi-Fi. The Windows app feeds them into a virtual controller ([vJoy](https://github.com/jshafer817/vJoy)) that games see as a regular wheel. No extra hardware, no account, no internet.
 
-> **Status:** first public release (0.1.1). Validated with rFactor on a Poco X8 Pro (Android 16) and Windows 11. Testing on other games and phones is the most valuable help right now.
+> **Status:** latest release: 0.1.2, with simpler screens. Validated with rFactor on a Poco X8 Pro (Android 16) and Windows 11. Testing on other games and phones is the most valuable help right now.
 
 ## Download
 
