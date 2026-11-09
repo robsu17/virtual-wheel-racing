@@ -1,10 +1,14 @@
 package app.virtualwheelracing.ui.ajustes
 
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.rememberScrollState
@@ -16,6 +20,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -24,6 +29,7 @@ import app.virtualwheelracing.domain.ResponseCurve
 import app.virtualwheelracing.ui.components.ScreenHeader
 import app.virtualwheelracing.ui.components.Segmented
 import app.virtualwheelracing.ui.components.VwrCard
+import app.virtualwheelracing.ui.components.drawChevronRight
 import app.virtualwheelracing.ui.theme.Fonts
 import app.virtualwheelracing.ui.theme.Palette
 import kotlin.math.roundToInt
@@ -32,7 +38,10 @@ import kotlin.math.roundToInt
 @Composable
 fun SettingsScreen(
     settings: GlobalSettings,
+    pcName: String,
     onChange: ((GlobalSettings) -> GlobalSettings) -> Unit,
+    onChangePc: () -> Unit,
+    onCalibration: () -> Unit,
     onBack: () -> Unit,
 ) {
     Column(
@@ -44,7 +53,7 @@ fun SettingsScreen(
             .padding(horizontal = 20.dp, vertical = 16.dp),
         verticalArrangement = Arrangement.spacedBy(14.dp),
     ) {
-        ScreenHeader("Ajustes do volante", "Valem para todos os jogos", onBack)
+        ScreenHeader("Ajustes", "Valem para todos os jogos", onBack)
 
         VwrCard {
             SectionTitle("Direção")
@@ -94,6 +103,12 @@ fun SettingsScreen(
         }
 
         VwrCard {
+            SectionTitle("PC e sensores")
+            LinkRow("Trocar de PC", "Pareado com $pcName", onChangePc)
+            LinkRow("Testar sensores", "Confira se o celular mede o giro direito", onCalibration)
+        }
+
+        VwrCard {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Column(Modifier.weight(1f)) {
                     Text("Vibração por eventos", fontSize = 15.sp, fontWeight = FontWeight.SemiBold, color = Palette.Text)
@@ -102,6 +117,20 @@ fun SettingsScreen(
                 Switch(checked = false, onCheckedChange = null, enabled = false)
             }
         }
+    }
+}
+
+@Composable
+private fun LinkRow(title: String, subtitle: String, onClick: () -> Unit) {
+    Row(
+        modifier = Modifier.fillMaxWidth().clickable(role = Role.Button, onClick = onClick).padding(vertical = 6.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Column(Modifier.weight(1f)) {
+            Text(title, fontSize = 15.sp, fontWeight = FontWeight.SemiBold, color = Palette.Text)
+            Text(subtitle, fontSize = 12.sp, color = Palette.Muted)
+        }
+        Canvas(Modifier.size(18.dp)) { drawChevronRight(Palette.Muted) }
     }
 }
 

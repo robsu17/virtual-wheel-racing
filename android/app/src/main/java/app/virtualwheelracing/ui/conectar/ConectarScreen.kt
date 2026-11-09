@@ -136,7 +136,7 @@ private fun ViewfinderIllustration() {
  * Lê o QR com o leitor do Google Play Services: não pede permissão de câmera ao app.
  * Na primeira vez, o Android pode baixar o módulo do leitor.
  */
-private fun scanPairingCode(context: Context, onPaired: (PairingPayload) -> Unit, onError: (String) -> Unit) {
+fun scanPairingCode(context: Context, onPaired: (PairingPayload) -> Unit, onError: (String) -> Unit) {
     val options = GmsBarcodeScannerOptions.Builder()
         .setBarcodeFormats(Barcode.FORMAT_QR_CODE)
         .build()

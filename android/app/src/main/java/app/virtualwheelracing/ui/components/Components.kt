@@ -184,7 +184,29 @@ fun DrawScope.drawSliders(color: Color) {
         drawCircle(color, radius = w * 0.1f, center = Offset(w * knob, w * row), style = s)
     }
 }
+/** Volante: aro, cubo e três raios. */
+fun DrawScope.drawWheelIcon(color: Color) {
+    val w = size.width
+    val s = stroke(w.toDp() / 12)
+    drawCircle(color, radius = w * 0.42f, center = Offset(w / 2, w / 2), style = s)
+    drawCircle(color, radius = w * 0.11f, center = Offset(w / 2, w / 2), style = s)
+    drawLine(color, Offset(w * 0.1f, w * 0.44f), Offset(w * 0.39f, w * 0.46f), strokeWidth = s.width, cap = StrokeCap.Round)
+    drawLine(color, Offset(w * 0.61f, w * 0.46f), Offset(w * 0.9f, w * 0.44f), strokeWidth = s.width, cap = StrokeCap.Round)
+    drawLine(color, Offset(w * 0.5f, w * 0.61f), Offset(w * 0.5f, w * 0.9f), strokeWidth = s.width, cap = StrokeCap.Round)
+}
 
+/** Seta circular, para "centralizar". */
+fun DrawScope.drawRecenter(color: Color) {
+    val w = size.width
+    val s = stroke()
+    drawArc(color, startAngle = -60f, sweepAngle = 300f, useCenter = false, topLeft = Offset(w * 0.18f, w * 0.18f), size = androidx.compose.ui.geometry.Size(w * 0.64f, w * 0.64f), style = s)
+    val head = Path().apply {
+        moveTo(w * 0.62f, w * 0.12f)
+        lineTo(w * 0.68f, w * 0.25f)
+        lineTo(w * 0.54f, w * 0.29f)
+    }
+    drawPath(head, color, style = s)
+}
 
 fun DrawScope.drawMonitor(color: Color) {
     val w = size.width

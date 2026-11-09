@@ -2,6 +2,7 @@ package app.virtualwheelracing.ui.dirigir
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -36,7 +38,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -44,6 +48,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.role
@@ -56,6 +61,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import app.virtualwheelracing.AppContainer
+import app.virtualwheelracing.R
 import app.virtualwheelracing.domain.AxisAssignment
 import app.virtualwheelracing.domain.GlobalSettings
 import app.virtualwheelracing.engine.DrivingSession
@@ -70,13 +76,9 @@ import app.virtualwheelracing.ui.components.drawBack
 import app.virtualwheelracing.ui.theme.Fonts
 import app.virtualwheelracing.ui.theme.Palette
 import kotlinx.coroutines.delay
-import kotlin.math.abs
-import kotlin.math.cos
-import kotlin.math.roundToInt
-import kotlin.math.sin
 
 @Composable
-fun DirigirScreen(container: AppContainer, pairing: PairingPayload, settings: GlobalSettings, onBack: () -> Unit) {
+fun DirigirScreen(container: AppContainer, pairing: PairingPayload, settings: GlobalSettings, setupMode: Boolean = false, onBack: () -> Unit) {
     var controls by remember { mutableStateOf<TouchControls?>(null) }
     var session by remember { mutableStateOf<DrivingSession?>(null) }
     var snapshot by remember { mutableStateOf<EngineSnapshot?>(null) }
@@ -126,13 +128,13 @@ fun DirigirScreen(container: AppContainer, pairing: PairingPayload, settings: Gl
             modifier = Modifier.fillMaxSize().safeDrawingPadding().padding(12.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            val brake: @Composable () -> Unit = { Pedal("FREIO", Palette.Brake) { controls?.brakePosition = it } }
-            val throttle: @Composable () -> Unit = { Pedal("ACELERADOR", Palette.Throttle) { controls?.throttlePosition = it } }
+            val brake: @Composable () -> Unit = { Pedal("FREIO", Palette.Brake, PedalIcon.BRAKE) { controls?.brakePosition = it } }
+            val throttle: @Composable () -> Unit = { Pedal("ACELERAR", Palette.Throttle, PedalIcon.THROTTLE) { controls?.throttlePosition = it } }
             if (settings.brakeOnLeft) brake() else throttle()
             CenterPanel(
-                pcName = pairing.pcName,
                 snapshot = snapshot,
                 controls = controls,
+                setupMode = setupMode,
                 assignment = assignment,
                 onAssignment = { axis ->
                     assignment = if (assignment == axis) null else axis
@@ -150,16 +152,24 @@ fun DirigirScreen(container: AppContainer, pairing: PairingPayload, settings: Gl
     }
 }
 
+private enum class PedalIcon { BRAKE, THROTTLE }
+
 /** Pedal por posição do polegar: embaixo = solto, em cima = no fundo. Solta ao tirar o dedo. */
 @Composable
-private fun Pedal(label: String, color: Color, onPosition: (Float) -> Unit) {
+private fun Pedal(label: String, color: Color, icon: PedalIcon, onPosition: (Float) -> Unit) {
     val level = remember { mutableFloatStateOf(0f) }
+    val shape = RoundedCornerShape(26.dp)
     Column(
         modifier = Modifier
-            .width(128.dp)
+            .width(150.dp)
             .fillMaxHeight()
-            .background(Palette.Surface, RoundedCornerShape(20.dp))
-            .border(1.dp, Palette.Line, RoundedCornerShape(20.dp))
+            .clip(shape)
+            .background(Palette.Surface)
+            .border(1.dp, Palette.Line, shape)
+            .drawBehind {
+                val h = size.height * level.floatValue
+                drawRect(color.copy(alpha = 0.35f), topLeft = Offset(0f, size.height - h), size = Size(size.width, h))
+            }
             .semantics { contentDescription = "Pedal $label" }
             .pointerInput(Unit) {
                 awaitEachGesture {
@@ -182,127 +192,145 @@ private fun Pedal(label: String, color: Color, onPosition: (Float) -> Unit) {
                     onPosition(0f)
                 }
             }
-            .padding(vertical = 12.dp),
+            .padding(vertical = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.Bottom,
     ) {
-        Text(label, color = Palette.Muted, fontFamily = Fonts.Display, fontSize = 14.sp, fontWeight = FontWeight.SemiBold, letterSpacing = 1.sp)
-        Box(
-            Modifier
-                .weight(1f)
-                .width(72.dp)
-                .drawBehind {
-                    val radius = CornerRadius(16.dp.toPx())
-                    drawRoundRect(Palette.Surface2, cornerRadius = radius)
-                    val h = size.height * level.floatValue
-                    drawRoundRect(color, topLeft = Offset(0f, size.height - h), size = Size(size.width, h), cornerRadius = radius)
-                },
-        )
-        Text("${(level.floatValue * 100).roundToInt()}%", color = Palette.Text, fontFamily = Fonts.Display, fontSize = 22.sp, fontWeight = FontWeight.Bold)
+        Canvas(Modifier.size(40.dp)) {
+            val w = size.width
+            val s = Stroke(w / 12f, cap = StrokeCap.Round)
+            if (icon == PedalIcon.BRAKE) {
+                drawRoundRect(color, topLeft = Offset(w * 0.25f, w * 0.17f), size = Size(w * 0.5f, w * 0.66f), cornerRadius = CornerRadius(w * 0.12f), style = s)
+                drawLine(color, Offset(w * 0.38f, w * 0.38f), Offset(w * 0.62f, w * 0.38f), s.width, StrokeCap.Round)
+                drawLine(color, Offset(w * 0.38f, w * 0.54f), Offset(w * 0.62f, w * 0.54f), s.width, StrokeCap.Round)
+            } else {
+                drawRoundRect(color, topLeft = Offset(w * 0.33f, w * 0.12f), size = Size(w * 0.34f, w * 0.76f), cornerRadius = CornerRadius(w * 0.12f), style = s)
+                for (y in listOf(0.3f, 0.46f, 0.62f)) {
+                    drawLine(color, Offset(w * 0.5f, w * y), Offset(w * 0.5f, w * (y + 0.08f)), s.width, StrokeCap.Round)
+                }
+            }
+        }
+        Text(label, color = Palette.Text, fontFamily = Fonts.Display, fontSize = 20.sp, fontWeight = FontWeight.Bold, letterSpacing = 1.2.sp, modifier = Modifier.padding(top = 8.dp))
     }
 }
 
 @Composable
 private fun RowScope.CenterPanel(
-    pcName: String,
     snapshot: EngineSnapshot?,
     controls: TouchControls?,
+    setupMode: Boolean,
     assignment: AxisAssignment?,
     onAssignment: (AxisAssignment) -> Unit,
     onRecenter: () -> Unit,
     onBack: () -> Unit,
 ) {
     var page by remember { mutableIntStateOf(0) }
-    Column(Modifier.weight(1f).fillMaxHeight(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+    Column(Modifier.weight(1f).fillMaxHeight(), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
             IconSquareButton("Voltar ao início", onBack) { drawBack(it) }
-            Column(Modifier.weight(1f)) {
-                Text("Conectado a", fontSize = 11.sp, color = Palette.Muted)
-                Text(pcName, fontFamily = Fonts.Display, fontWeight = FontWeight.SemiBold, fontSize = 17.sp, color = Palette.Text, maxLines = 1)
-            }
-            if (snapshot?.linkState == LinkState.CONNECTED) {
-                StatusChip("Conectado · ${snapshot.sensorRateHz} Hz", Palette.Throttle, Palette.OkBackground)
-            } else {
-                StatusChip("Procurando", Palette.Warning, Palette.WarnBackground)
+            Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
+                if (snapshot?.linkState == LinkState.CONNECTED) {
+                    StatusChip("Conectado", Palette.Throttle, Palette.OkBackground)
+                } else {
+                    StatusChip("Procurando o PC", Palette.Warning, Palette.WarnBackground)
+                }
             }
             Button(onClick = onRecenter, modifier = Modifier.height(44.dp), shape = RoundedCornerShape(12.dp)) {
-                Text("Recentrar", fontWeight = FontWeight.SemiBold)
+                Text("Centralizar", fontWeight = FontWeight.SemiBold, fontSize = 15.sp)
             }
         }
 
-        SteeringGauge(snapshot?.steering ?: 0f, snapshot?.phoneDegrees ?: 0f, Modifier.weight(1f).fillMaxWidth())
-        if (snapshot?.tilted == true) {
-            Text("Celular inclinado demais: endireite para voltar a esterçar", color = Palette.Warning, fontSize = 12.sp)
-        }
-
-        for (row in 0 until 2) {
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                for (column in 0 until 4) {
-                    GameButton(page * 8 + row * 4 + column, controls)
+        if (setupMode) {
+            SetupPanel(assignment, onAssignment, Modifier.weight(1f).fillMaxWidth())
+        } else {
+            Box(Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
+                Image(
+                    painterResource(R.drawable.logo_tile),
+                    contentDescription = "Volante girando junto com o celular",
+                    modifier = Modifier.fillMaxHeight(0.9f).aspectRatio(1f).rotate(snapshot?.phoneDegrees ?: 0f),
+                )
+                if (snapshot?.tilted == true) {
+                    Text(
+                        "Endireite o celular para voltar a virar",
+                        color = Palette.Warning,
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        modifier = Modifier
+                            .align(Alignment.BottomCenter)
+                            .background(Palette.WarnBackground, RoundedCornerShape(999.dp))
+                            .padding(horizontal = 12.dp, vertical = 6.dp),
+                    )
                 }
             }
         }
 
-        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-            Text(
-                if (page == 0) "Botões 1 a 8 · ver 9 a 16" else "Botões 9 a 16 · ver 1 a 8",
-                color = Palette.Muted,
-                fontSize = 12.sp,
+        Row(horizontalArrangement = Arrangement.spacedBy(10.dp), verticalAlignment = Alignment.CenterVertically) {
+            for (column in 0 until BUTTONS_PER_PAGE) {
+                GameButton(page * BUTTONS_PER_PAGE + column, controls)
+            }
+            Box(
                 modifier = Modifier
-                    .weight(1f)
-                    .clickable(role = Role.Button) { page = 1 - page }
-                    .padding(vertical = 10.dp),
-            )
-            Text("Atribuir:", color = Palette.Muted, fontSize = 12.sp)
-            AssignmentChip("Direção", AxisAssignment.STEERING, assignment, onAssignment)
-            AssignmentChip("Acelerador", AxisAssignment.THROTTLE, assignment, onAssignment)
-            AssignmentChip("Freio", AxisAssignment.BRAKE, assignment, onAssignment)
+                    .size(52.dp)
+                    .background(Palette.Surface2, RoundedCornerShape(16.dp))
+                    .clickable(role = Role.Button) { page = (page + 1) % PAGES }
+                    .semantics { contentDescription = "Mais botões, página ${page + 1} de $PAGES" },
+                contentAlignment = Alignment.Center,
+            ) {
+                Text("${page + 1}/$PAGES", color = Palette.Muted, fontSize = 13.sp, fontWeight = FontWeight.SemiBold)
+            }
         }
     }
 }
 
-/** Arco de 180°: o ponto mostra a direção enviada ao jogo; o número, o giro do celular. */
+private const val BUTTONS_PER_PAGE = 4
+private const val PAGES = 16 / BUTTONS_PER_PAGE
+
+/** Modo de configuração: manda um comando de cada vez, para o jogo reconhecer o certo. */
 @Composable
-private fun SteeringGauge(steering: Float, phoneDegrees: Float, modifier: Modifier) {
-    Box(modifier, contentAlignment = Alignment.BottomCenter) {
-        Canvas(
-            Modifier
-                .fillMaxSize()
-                .semantics { contentDescription = "Direção em ${(steering * 100).roundToInt()} por cento" },
-        ) {
-            val stroke = 14.dp.toPx()
-            val radius = minOf(size.width / 2f, size.height) - stroke
-            val center = Offset(size.width / 2f, size.height - stroke / 2f)
-            val topLeft = Offset(center.x - radius, center.y - radius)
-            val arcSize = Size(radius * 2, radius * 2)
-            drawArc(Palette.Line, 180f, 180f, false, topLeft, arcSize, style = Stroke(stroke, cap = StrokeCap.Round))
-            drawArc(Palette.Accent, -90f, steering * 90f, false, topLeft, arcSize, style = Stroke(stroke, cap = StrokeCap.Round))
-            val angle = Math.toRadians((-90.0 + steering * 90.0))
-            val knob = Offset(center.x + radius * cos(angle).toFloat(), center.y + radius * sin(angle).toFloat())
-            drawCircle(Palette.Background, radius = 13.dp.toPx(), center = knob)
-            drawCircle(Palette.Text, radius = 10.dp.toPx(), center = knob)
+private fun SetupPanel(assignment: AxisAssignment?, onAssignment: (AxisAssignment) -> Unit, modifier: Modifier) {
+    Column(
+        modifier
+            .background(Palette.Surface, RoundedCornerShape(20.dp))
+            .border(1.dp, Palette.Line, RoundedCornerShape(20.dp))
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterVertically),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Text("Configurando no jogo", fontFamily = Fonts.Display, fontWeight = FontWeight.Bold, fontSize = 22.sp, color = Palette.Text)
+        Text(
+            "No jogo, escolha o comando. Aqui, toque no mesmo comando e mexa só ele.",
+            fontSize = 13.sp,
+            color = Palette.Muted,
+            textAlign = TextAlign.Center,
+            lineHeight = 18.sp,
+        )
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            AssignmentChip("Direção", AxisAssignment.STEERING, assignment, onAssignment)
+            AssignmentChip("Acelerador", AxisAssignment.THROTTLE, assignment, onAssignment)
+            AssignmentChip("Freio", AxisAssignment.BRAKE, assignment, onAssignment)
         }
-        Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(bottom = 6.dp)) {
-            Text(formatDegrees(phoneDegrees), fontFamily = Fonts.Display, fontWeight = FontWeight.Bold, fontSize = 44.sp, color = Palette.Text)
-            Text(
-                "giro do celular · direção ${(steering * 100).roundToInt()}%",
-                fontSize = 12.sp,
-                color = Palette.Muted,
-            )
-        }
+        Text(
+            if (assignment == null) "Nenhum escolhido: tudo vai junto para o jogo" else "Só esse comando está indo para o jogo",
+            fontSize = 12.sp,
+            color = if (assignment == null) Palette.Muted else Palette.AccentText,
+        )
     }
 }
 
 @Composable
 private fun RowScope.GameButton(index: Int, controls: TouchControls?) {
     var pressed by remember { mutableStateOf(false) }
+    val letter = 'A' + index
     Box(
         modifier = Modifier
             .weight(1f)
-            .height(44.dp)
-            .background(if (pressed) Palette.AccentDark else Palette.Surface, RoundedCornerShape(12.dp))
-            .border(1.dp, if (pressed) Palette.Accent else Palette.Line, RoundedCornerShape(12.dp))
-            .semantics { role = Role.Button }
+            .height(52.dp)
+            .background(if (pressed) Palette.AccentDark else Palette.Surface, RoundedCornerShape(16.dp))
+            .border(1.dp, if (pressed) Palette.Accent else Palette.Line, RoundedCornerShape(16.dp))
+            .semantics {
+                role = Role.Button
+                contentDescription = "Botão $letter"
+            }
             .pointerInput(index) {
                 detectTapGestures(onPress = {
                     pressed = true
@@ -314,7 +342,7 @@ private fun RowScope.GameButton(index: Int, controls: TouchControls?) {
             },
         contentAlignment = Alignment.Center,
     ) {
-        Text("Botão ${index + 1}", color = if (pressed) Palette.AccentText else Palette.Text, fontSize = 13.sp, fontWeight = FontWeight.SemiBold)
+        Text("$letter", color = if (pressed) Palette.AccentText else Palette.Text, fontFamily = Fonts.Display, fontSize = 22.sp, fontWeight = FontWeight.Bold)
     }
 }
 
@@ -323,14 +351,14 @@ private fun AssignmentChip(label: String, axis: AxisAssignment, selected: AxisAs
     val active = selected == axis
     Box(
         modifier = Modifier
-            .height(40.dp)
-            .background(if (active) Palette.Accent else Palette.Surface, RoundedCornerShape(10.dp))
-            .border(1.dp, if (active) Palette.Accent else Palette.Line, RoundedCornerShape(10.dp))
+            .height(48.dp)
+            .background(if (active) Palette.Accent else Palette.Surface2, RoundedCornerShape(12.dp))
+            .border(1.dp, if (active) Palette.Accent else Palette.Line, RoundedCornerShape(12.dp))
             .clickable(role = Role.Button) { onSelect(axis) }
-            .padding(horizontal = 10.dp),
+            .padding(horizontal = 16.dp),
         contentAlignment = Alignment.Center,
     ) {
-        Text(label, color = if (active) Palette.OnAccent else Palette.Text, fontSize = 12.sp, fontWeight = FontWeight.SemiBold)
+        Text(label, color = if (active) Palette.OnAccent else Palette.Text, fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
     }
 }
 
@@ -354,7 +382,7 @@ private fun SearchingOverlay(pcName: String, lost: Boolean, error: String?, onBa
             verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
             Text(
-                if (lost) "Conexão perdida" else "Procurando $pcName…",
+                if (lost) "Reconectando…" else "Procurando $pcName…",
                 fontFamily = Fonts.Display,
                 fontWeight = FontWeight.Bold,
                 fontSize = 26.sp,
@@ -363,9 +391,9 @@ private fun SearchingOverlay(pcName: String, lost: Boolean, error: String?, onBa
             )
             Text(
                 if (lost) {
-                    "Os pedais foram soltos e a direção está voltando ao centro. Tentando reconectar…"
+                    "Seu carro já parou com segurança. Confira se o PC está ligado e no mesmo Wi-Fi."
                 } else {
-                    "Confira se o Virtual Wheel Racing está aberto no Windows e se os dois estão na mesma rede Wi-Fi."
+                    "Deixe o Virtual Wheel Racing aberto no PC e use o mesmo Wi-Fi nos dois."
                 },
                 fontSize = 14.sp,
                 color = Palette.Muted,
@@ -376,9 +404,4 @@ private fun SearchingOverlay(pcName: String, lost: Boolean, error: String?, onBa
             OutlinedButton(onClick = onBack, modifier = Modifier.height(44.dp)) { Text("Voltar ao início") }
         }
     }
-}
-
-private fun formatDegrees(degrees: Float): String {
-    val rounded = degrees.roundToInt()
-    return (if (rounded < 0) "−" else "") + abs(rounded) + "°"
 }
