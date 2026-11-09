@@ -333,7 +333,7 @@ O protótipo de ponta a ponta segue esta arquitetura, com simplificações consc
 | Instalador MSI sem ações próprias | o jpackage não roda passos extras na instalação | a Verificação do PC instala o vJoy que vem junto, configura o dispositivo 1 e libera o firewall, cada um com o aviso de administrador do Windows; um instalador único (Inno Setup ou WiX com ações) fica para o beta |
 | Instalador e app sem assinatura digital | sem certificado ainda | certificado OV; até lá, o Windows mostra o aviso do SmartScreen |
 | Regra de bloqueio do firewall não é detectada | se o usuário recusou o aviso do Windows antes, a regra de bloqueio vence | detectar e remover regras de bloqueio do Virtual Wheel Racing |
-| Atalhos "Atribuir" ficam na tela Dirigir, não na Início | precisam de uma sessão aberta com o PC | rever se o teste com usuários pedir |
+| Atalhos "Atribuir" ficam no modo configuração da tela Dirigir | precisam de uma sessão aberta com o PC; o guia por jogo leva até lá | rever se o teste com usuários pedir |
 
 ## 14. O que ainda está em aberto
 

@@ -15,10 +15,10 @@ object Palette {
     val Line = Color(0xFF2C313A)
     val Text = Color(0xFFF2F4F7)
     val Muted = Color(0xFFA3ABB8)
-    val Accent = Color(0xFFE31E24) // vermelho da logo: botÃµes e destaques
-    val AccentText = Color(0xFFFF5A5F) // vermelho legÃ­vel como texto sobre o fundo escuro
+    val Accent = Color(0xFFE31E24) // vermelho da logo: botões e destaques
+    val AccentText = Color(0xFFFF5A5F) // vermelho legível como texto sobre o fundo escuro
     val OnAccent = Color(0xFFFFFFFF)
-    val Warning = Color(0xFFFFB020) // Ã¢mbar: sÃ³ para avisos
+    val Warning = Color(0xFFFFB020) // âmbar: só para avisos
     val Throttle = Color(0xFF3DDC97)
     val Brake = Color(0xFFFF6B5E)
     val OkBackground = Color(0xFF12352A)

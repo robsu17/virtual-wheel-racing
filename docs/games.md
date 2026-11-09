@@ -22,6 +22,6 @@ Virtual Wheel Racing shows up in games as **vJoy Device**, a generic DirectInput
 
 - Set the game's **deadzone to 0%**: Virtual Wheel Racing already applies its own.
 - Turn **force feedback off** for vJoy Device: the phone cannot push back.
-- Use the **Assign** buttons (*Atribuir*) on the driving screen: they move only one axis at a time, so the game detects the right control.
+- Use the **setup mode** (*Configurar meu jogo > Abrir modo configuração*): it sends only one control at a time, so the game detects the right one.
 - If a pedal acts reversed (pressed when released), use the game's "invert axis" option and tell us in an issue.
 - Online and competitive play: virtual controllers are allowed in most sims, but rules vary. Check each game's rules first.

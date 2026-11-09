@@ -51,7 +51,7 @@ import kotlinx.coroutines.withContext
 private enum class Section(val label: String) { PAINEL("Painel"), CONECTAR("Conectar celular"), VERIFICACAO("Verificação do PC") }
 
 /** Estado da verificação do PC, recalculado depois de cada correção. */
-private data class Checks(
+internal data class Checks(
     val driverOk: Boolean,
     val deviceOk: Boolean,
     val axesOk: Boolean,
@@ -61,7 +61,7 @@ private data class Checks(
     val allOk get() = driverOk && deviceOk && axesOk && firewallOk && portOk
 }
 
-private fun DesktopContainer.checks(): Checks {
+internal fun DesktopContainer.checks(): Checks {
     val driver = driverStatus
     return Checks(
         driverOk = driver.driverLoaded && driver.driverEnabled,
@@ -75,7 +75,8 @@ private fun DesktopContainer.checks(): Checks {
 @Composable
 fun MainScreen(container: DesktopContainer) {
     var checks by remember { mutableStateOf(container.checks()) }
-    var section by remember { mutableStateOf(if (checks.allOk) Section.CONECTAR else Section.VERIFICACAO) }
+    var section by remember { mutableStateOf(if (checks.allOk) Section.PAINEL else Section.VERIFICACAO) }
+    var technical by remember { mutableStateOf(false) }
     var snapshot by remember { mutableStateOf(container.receiver.snapshot()) }
 
     LaunchedEffect(Unit) {
@@ -87,8 +88,12 @@ fun MainScreen(container: DesktopContainer) {
 
     MaterialTheme(colorScheme = Palette.scheme) {
         Surface(color = Palette.Background, modifier = Modifier.fillMaxSize()) {
+            if (!technical) {
+                SimpleScreen(container, checks, snapshot, onChecksChanged = { checks = it }, onTechnical = { technical = true })
+                return@Surface
+            }
             Row(Modifier.fillMaxSize()) {
-                Sidebar(section, checks.allOk, snapshot.connected, onSelect = { section = it })
+                Sidebar(section, checks.allOk, snapshot.connected, onSelect = { section = it }, onSimple = { technical = false })
                 Box(Modifier.weight(1f).fillMaxHeight().verticalScroll(rememberScrollState()).padding(horizontal = 48.dp, vertical = 40.dp)) {
                     Column(Modifier.widthIn(max = 1000.dp), verticalArrangement = Arrangement.spacedBy(20.dp)) {
                         when (section) {
@@ -104,7 +109,7 @@ fun MainScreen(container: DesktopContainer) {
 }
 
 @Composable
-private fun Sidebar(selected: Section, checksOk: Boolean, connected: Boolean, onSelect: (Section) -> Unit) {
+private fun Sidebar(selected: Section, checksOk: Boolean, connected: Boolean, onSelect: (Section) -> Unit, onSimple: () -> Unit) {
     val logo = remember { Fonts::class.java.getResourceAsStream("/icon.png")?.use { BitmapPainter(loadImageBitmap(it)) } }
     Column(
         modifier = Modifier.width(232.dp).fillMaxHeight().background(Palette.Sidebar).padding(horizontal = 16.dp, vertical = 24.dp),
@@ -142,6 +147,8 @@ private fun Sidebar(selected: Section, checksOk: Boolean, connected: Boolean, on
                 }
             }
         }
+        Spacer(Modifier.weight(1f))
+        OutlinedButton(onClick = onSimple, modifier = Modifier.fillMaxWidth()) { Text("Voltar à tela simples") }
     }
 }
 
@@ -158,7 +165,7 @@ private fun PainelSection(container: DesktopContainer, snapshot: app.virtualwhee
                 else -> Triple("Sem sinal · failsafe ativo", Palette.Brake, Palette.ErrorBackground)
             }
             Pill(text, fg, bg)
-            Label("Abra o Virtual Wheel Racing no celular e toque em Começar a dirigir.")
+            Label("Abra o Virtual Wheel Racing no celular e toque em Jogar.")
         }
         Panel("Volante virtual", Modifier.weight(1f)) {
             Text(
@@ -198,7 +205,7 @@ private fun PainelSection(container: DesktopContainer, snapshot: app.virtualwhee
 @Composable
 private fun ConectarSection(container: DesktopContainer) {
     var payload by remember { mutableStateOf(container.pairingPayload()) }
-    PageTitle("Conectar um celular", "No app Virtual Wheel Racing do Android, toque em Ler código QR e aponte a câmera para este código.")
+    PageTitle("Conectar um celular", "No app Virtual Wheel Racing do Android, toque em Escanear o código do PC (ou em Ajustes > Trocar de PC) e aponte a câmera para este código.")
     Row(horizontalArrangement = Arrangement.spacedBy(24.dp)) {
         Panel("Código QR", Modifier.weight(1f)) {
             val current = payload

@@ -36,10 +36,10 @@ Cada versão traz o SHA-256 de cada arquivo, para você conferir o download.
 
 ## Primeiros passos
 
-1. **PC:** instale o MSI e abra o Virtual Wheel Racing. Na **Verificação do PC**, clique nos botões até todos os itens ficarem OK: instalar o vJoy, configurar o dispositivo e liberar o firewall. O Windows pede confirmação em cada um.
-2. **Celular:** abra o app, toque em **Ler código QR** e aponte para o código da seção **Conectar celular** do PC. O celular lembra do PC.
-3. **Celular:** toque em **Calibrar** uma vez, para testar o sensor, e depois em **Começar a dirigir**, segurando o celular como um volante.
-4. **Jogo:** nas opções de controle, escolha o **vJoy Device** e atribua a direção (eixo X), o acelerador (Y), o freio (Z) e os botões. Os botões **Atribuir** da tela de direção mexem um eixo por vez, para o jogo detectar o certo. Deixe a zona morta do jogo em 0%.
+1. **PC:** instale o MSI e abra o Virtual Wheel Racing. Clique em **Preparar meu PC**: ele instala o vJoy, configura o dispositivo e libera o firewall. O Windows pede confirmação em cada passo.
+2. **Celular:** abra o app, toque em **Escanear o código do PC** e aponte para o código que aparece no PC. O celular lembra do PC.
+3. **Celular:** toque em **Jogar** e segure o celular como um volante. Em **Direção**, escolha Suave, Normal ou Rápida.
+4. **Jogo:** nas opções de controle, escolha o **vJoy Device** e atribua a direção (eixo X), o acelerador (Y), o freio (Z) e os botões. Em **Configurar meu jogo** há um passo a passo por jogo e o **modo configuração**, que manda um comando por vez para o jogo detectar o certo. Deixe a zona morta do jogo em 0%.
 
 ## Recursos
 
@@ -73,9 +73,9 @@ A lista completa, com dicas, está em **[docs/games.md](docs/games.md)** (em ing
 
 | Problema | O que conferir |
 |---|---|
-| O celular fica em "Procurando o PC" | Celular e PC na mesma rede (não na rede de convidados); **Liberar no firewall** OK na Verificação do PC; o Virtual Wheel Racing aberto no PC. |
+| O celular fica em "Procurando o PC" | Celular e PC na mesma rede (não na rede de convidados); **Preparar meu PC** concluído (veja em *Detalhes técnicos*); o Virtual Wheel Racing aberto no PC. |
 | O Windows mostra "O Windows protegeu o computador" | O instalador ainda não tem assinatura digital. Clique em **Mais informações › Executar assim mesmo**. Você pode comparar o SHA-256 do arquivo com o da página da versão. |
-| O jogo não mostra o vJoy Device | Rode a **Verificação do PC**: todos os itens precisam estar OK. Reinicie o jogo depois de instalar o vJoy. |
+| O jogo não mostra o vJoy Device | Clique em **Preparar meu PC** ou confira em *Detalhes técnicos > Verificação do PC*. Reinicie o jogo depois de instalar o vJoy. |
 | Direção invertida ou rápida demais | Use a opção de inverter ou a rotação do volante no jogo. No celular, ajuste o **Giro do celular** em Ajustes. |
 | A direção trava com o celular deitado | O app congela a direção acima de uns 70° de inclinação. Segure o celular mais em pé. |
 | Atraso ou travadas | Use Wi-Fi de 5 GHz e o PC ligado ao roteador por cabo. Veja o "Intervalo entre pacotes" no Painel do PC. |
@@ -83,7 +83,7 @@ A lista completa, com dicas, está em **[docs/games.md](docs/games.md)** (em ing
 ## Limitações conhecidas
 
 - O instalador do Windows ainda não tem assinatura digital, então o Windows mostra o aviso do SmartScreen. O APK do Android é assinado.
-- O MSI não instala o vJoy durante a instalação; isso acontece na primeira abertura, pela Verificação do PC.
+- O MSI não instala o vJoy durante a instalação; isso acontece na primeira abertura, pelo botão Preparar meu PC.
 - A chave de pareamento fica guardada sem proteção extra (arquivo no PC, preferências do app no celular).
 - Ainda não há vibração com a pista nem telemetria dos jogos.
 - O leitor de QR depende do Google Play Services, que não é software livre; a troca está planejada.
