@@ -84,7 +84,7 @@ The full list, with tips, is in **[docs/games.md](docs/games.md)**. Tested anoth
 
 ## Known limitations
 
-- Not code-signed yet: Windows shows a SmartScreen warning, and the APK is a debug build.
+- The Windows installer is not code-signed yet, so Windows shows a SmartScreen warning. The Android APK is signed.
 - The MSI does not install vJoy during setup; that happens on first launch, in PC check.
 - The pairing key is stored without extra protection (a file on the PC, app preferences on the phone).
 - No track vibration or game telemetry yet.
@@ -106,7 +106,7 @@ gradlew.bat :android:app:assembleDebug :desktop:app:packageMsi
 gradlew.bat :desktop:app:run
 ```
 
-The APK lands in `android/app/build/outputs/apk/debug/` and the MSI in `desktop/app/build/compose/binaries/main/msi/`. `tools/vjoy-teste.ps1` moves the vJoy axes without a phone, handy for mapping a game.
+The APK lands in `android/app/build/outputs/apk/debug/` and the MSI in `desktop/app/build/compose/binaries/main/msi/`. `assembleRelease` builds an optimized APK; it is only signed on the maintainer's machine (see [docs/release.md](docs/release.md)). `tools/vjoy-teste.ps1` moves the vJoy axes without a phone, handy for mapping a game.
 
 | Folder | Contents |
 |---|---|

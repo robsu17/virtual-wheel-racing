@@ -82,7 +82,7 @@ A lista completa, com dicas, está em **[docs/games.md](docs/games.md)** (em ing
 
 ## Limitações conhecidas
 
-- Ainda sem assinatura digital: o Windows mostra o aviso do SmartScreen, e o APK é de depuração.
+- O instalador do Windows ainda não tem assinatura digital, então o Windows mostra o aviso do SmartScreen. O APK do Android é assinado.
 - O MSI não instala o vJoy durante a instalação; isso acontece na primeira abertura, pela Verificação do PC.
 - A chave de pareamento fica guardada sem proteção extra (arquivo no PC, preferências do app no celular).
 - Ainda não há vibração com a pista nem telemetria dos jogos.
@@ -104,7 +104,7 @@ gradlew.bat :android:app:assembleDebug :desktop:app:packageMsi
 gradlew.bat :desktop:app:run
 ```
 
-O APK sai em `android/app/build/outputs/apk/debug/` e o MSI em `desktop/app/build/compose/binaries/main/msi/`. O `tools/vjoy-teste.ps1` mexe os eixos do vJoy sem o celular, útil para atribuir controles num jogo.
+O APK sai em `android/app/build/outputs/apk/debug/` e o MSI em `desktop/app/build/compose/binaries/main/msi/`. O `assembleRelease` gera um APK otimizado, assinado só no PC do mantenedor (veja [docs/release.md](docs/release.md)). O `tools/vjoy-teste.ps1` mexe os eixos do vJoy sem o celular, útil para atribuir controles num jogo.
 
 | Pasta | O que tem |
 |---|---|
