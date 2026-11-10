@@ -23,6 +23,16 @@ Segure o celular como um volante: ele envia direção, pedais e botões pela sua
 
 > **Status:** versão atual: 0.1.2, com telas mais simples em português e inglês. Validado no rFactor com um Poco X8 Pro (Android 16) e Windows 11. Testes em outros jogos e celulares são a ajuda mais valiosa agora.
 
+<p align="center">
+  <img src="docs/images/phone-driving.jpg" width="820" alt="Tela de direção no celular: pedais de freio e acelerador nas laterais, medidor de direção marcando 0 grau no meio, botão Centralizar e botões de jogo de A a D">
+</p>
+<p align="center"><em>No celular: pedais no polegar nas laterais, ângulo da direção ao vivo no meio e botões do jogo embaixo.</em></p>
+
+<p align="center">
+  <img src="docs/images/windows-setup.png" width="820" alt="Programa do Windows: três etapas (PC pronto, Conectar o celular, Jogar), código QR grande para parear o celular e dicas de conexão">
+</p>
+<p align="center"><em>No Windows: o PC é preparado com um clique, depois é só escanear o código com o celular. (O código de pareamento está borrado aqui.)</em></p>
+
 ## Download
 
 **[⬇ Baixar a versão mais recente](https://github.com/robsu17/virtual-wheel-racing/releases)**. Você precisa dos dois arquivos:
