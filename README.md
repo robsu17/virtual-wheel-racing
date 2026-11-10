@@ -21,7 +21,7 @@
 
 Hold your phone like a steering wheel: it sends steering, pedals and buttons over your local Wi-Fi. The Windows app feeds them into a virtual controller ([vJoy](https://github.com/jshafer817/vJoy)) that games see as a regular wheel. No extra hardware, no account, no internet.
 
-> **Status:** latest release: 0.1.2, with simpler screens. Validated with rFactor on a Poco X8 Pro (Android 16) and Windows 11. Testing on other games and phones is the most valuable help right now.
+> **Status:** latest release: 0.1.2, with simpler screens in English and Portuguese. Validated with rFactor on a Poco X8 Pro (Android 16) and Windows 11. Testing on other games and phones is the most valuable help right now.
 
 ## Download
 
@@ -36,12 +36,12 @@ Each release lists the SHA-256 checksum of every file, so you can confirm your d
 
 ## Quick start
 
-1. **PC:** install the MSI and open Virtual Wheel Racing. Click **Prepare my PC** (*Preparar meu PC*): it installs vJoy, configures the device and opens the firewall. Windows asks for confirmation at each step.
-2. **Phone:** open the app, tap **Scan the PC code** (*Escanear o código do PC*) and point it at the code shown on the PC. The phone remembers the PC.
-3. **Phone:** tap **Play** (*Jogar*) and hold the phone like a wheel. Under **Steering** (*Direção*), pick Soft, Normal or Fast.
-4. **Game:** in the control options, pick **vJoy Device** and map steering (X axis), throttle (Y), brake (Z) and buttons. **Set up my game** (*Configurar meu jogo*) has a per-game walkthrough and a **setup mode** that sends one control at a time, so the game detects the right one. Set the game's deadzone to 0%.
+1. **PC:** install the MSI and open Virtual Wheel Racing. Click **Set up my PC**: it installs vJoy, configures the device and opens the firewall. Windows asks for confirmation at each step.
+2. **Phone:** open the app, tap **Scan the PC code** and point it at the code shown on the PC. The phone remembers the PC.
+3. **Phone:** tap **Play** and hold the phone like a wheel. Under **Steering**, pick Soft, Normal or Fast.
+4. **Game:** in the control options, pick **vJoy Device** and map steering (X axis), throttle (Y), brake (Z) and buttons. **Set up my game** has a per-game walkthrough and a **setup mode** that sends one control at a time, so the game detects the right one. Set the game's deadzone to 0%.
 
-> The app's interface is in Brazilian Portuguese for now. Translations are welcome.
+> The phone app and the Windows program are in English and Portuguese, following the system language. On Android 13+ you can also pick the language in the app's system settings. Other translations are welcome.
 
 ## Features
 
@@ -75,9 +75,9 @@ The full list, with tips, is in **[docs/games.md](docs/games.md)**. Tested anoth
 
 | Problem | What to check |
 |---|---|
-| The phone keeps saying *Procurando o PC* (searching) | Phone and PC on the same network (not a guest network); **Prepare my PC** finished (see *Detalhes técnicos*); Virtual Wheel Racing is open on the PC. |
+| The phone keeps saying *Procurando o PC* (searching) | Phone and PC on the same network (not a guest network); **Set up my PC** finished (see *Technical details*); Virtual Wheel Racing is open on the PC. |
 | Windows shows "Windows protected your PC" | The installer is not code-signed yet. Click **More info › Run anyway**. You can compare the file's SHA-256 with the one on the release page. |
-| The game does not list vJoy Device | Click **Prepare my PC**, or check *Detalhes técnicos > Verificação do PC*. Restart the game after installing vJoy. |
+| The game does not list vJoy Device | Click **Set up my PC**, or check *Technical details > PC check*. Restart the game after installing vJoy. |
 | Steering is reversed or too fast | Use the game's invert option or steering lock. On the phone, adjust **Phone rotation** (*Giro do celular*) in Settings (*Ajustes*). |
 | Steering stops when holding the phone flat | The app freezes steering beyond about 70° of tilt. Hold the phone more upright. |
 | Lag or stutter | Use 5 GHz Wi-Fi and connect the PC to the router with a cable. Check *Intervalo entre pacotes* in the PC's dashboard. |
@@ -85,7 +85,7 @@ The full list, with tips, is in **[docs/games.md](docs/games.md)**. Tested anoth
 ## Known limitations
 
 - The Windows installer is not code-signed yet, so Windows shows a SmartScreen warning. The Android APK is signed.
-- The MSI does not install vJoy during setup; that happens on first launch, through the Prepare my PC button.
+- The MSI does not install vJoy during setup; that happens on first launch, through the Set up my PC button.
 - The pairing key is stored without extra protection (a file on the PC, app preferences on the phone).
 - No track vibration or game telemetry yet.
 - The QR scanner relies on Google Play Services, which is not free software; replacing it is planned.

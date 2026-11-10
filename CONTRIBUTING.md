@@ -70,7 +70,7 @@ Os commits anteriores a 8/nov/2026 não seguem esse padrão; ele vale daqui para
 ## Estilo
 
 - Kotlin no estilo oficial (`kotlin.code.style=official`).
-- Textos de interface em português do Brasil.
+- Textos de interface em inglês e português: no Android, em `res/values/strings.xml` (inglês) e `res/values-pt/strings.xml`; no Windows, em `desktop/app/.../ui/Strings.kt`. Todo texto novo entra nos dois idiomas.
 - Comentários explicam o porquê, não o que o código já diz.
 - Uma mudança por pull request, com testes quando houver regra nova.
 

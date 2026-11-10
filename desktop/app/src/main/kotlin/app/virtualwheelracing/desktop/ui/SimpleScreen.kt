@@ -70,6 +70,7 @@ internal fun SimpleScreen(
     val logo = remember { Fonts::class.java.getResourceAsStream("/icon.png")?.use { BitmapPainter(loadImageBitmap(it)) } }
     val pcReady = checks.allOk
     val connected = snapshot.connected
+    val t = Strings.current
 
     Box(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(horizontal = 32.dp, vertical = 32.dp), contentAlignment = Alignment.TopCenter) {
         Column(Modifier.widthIn(max = 1040.dp).fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(28.dp)) {
@@ -77,7 +78,7 @@ internal fun SimpleScreen(
                 logo?.let { Image(it, contentDescription = null, modifier = Modifier.size(44.dp)) }
                 Text(
                     buildAnnotatedString {
-                        append("Virtual Wheel ")
+                        append(t.appNamePrefix)
                         withStyle(SpanStyle(color = Palette.AccentText)) { append("Racing") }
                     },
                     fontFamily = Fonts.Display,
@@ -87,23 +88,23 @@ internal fun SimpleScreen(
                     modifier = Modifier.weight(1f),
                 )
                 TextButton(onClick = onTechnical) {
-                    Text("Detalhes técnicos", color = Palette.Muted, fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
+                    Text(t.technicalDetails, color = Palette.Muted, fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
                 }
             }
 
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                Step(1, "PC pronto", if (pcReady) "Tudo instalado" else "Falta preparar", if (pcReady) StepState.DONE else StepState.CURRENT)
+                Step(1, t.stepPcReady, if (pcReady) t.stepPcReadyDone else t.stepPcReadyTodo, if (pcReady) StepState.DONE else StepState.CURRENT)
                 Step(
                     2,
-                    "Conectar o celular",
-                    if (connected) "Conectado" else if (pcReady) "Agora" else "Depois",
+                    t.stepConnect,
+                    if (connected) t.stepConnected else if (pcReady) t.stepNow else t.stepLater,
                     when {
                         connected -> StepState.DONE
                         pcReady -> StepState.CURRENT
                         else -> StepState.NEXT
                     },
                 )
-                Step(3, "Jogar", "Abrir seu jogo", if (connected && pcReady) StepState.CURRENT else StepState.NEXT)
+                Step(3, t.stepPlay, t.stepPlaySubtitle, if (connected && pcReady) StepState.CURRENT else StepState.NEXT)
             }
 
             Row(horizontalArrangement = Arrangement.spacedBy(24.dp)) {
@@ -115,23 +116,19 @@ internal fun SimpleScreen(
                     }
                 }
                 Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                    SideCard("Ainda não tem o app?") {
+                    SideCard(t.noAppTitle) {
                         Text(
-                            "Baixe o Virtual Wheel Racing no celular Android e volte para esta tela.",
+                            t.noAppBody,
                             fontSize = 15.sp,
                             lineHeight = 22.sp,
                             color = Palette.Muted,
                         )
                         OutlinedButton(onClick = { openBrowser(DOWNLOAD_URL) }, shape = RoundedCornerShape(12.dp), modifier = Modifier.height(44.dp)) {
-                            Text("Como baixar no celular", color = Palette.Text, fontWeight = FontWeight.SemiBold)
+                            Text(t.howToDownload, color = Palette.Text, fontWeight = FontWeight.SemiBold)
                         }
                     }
-                    SideCard("Não está conectando?") {
-                        listOf(
-                            "O celular e o PC precisam estar no mesmo Wi-Fi.",
-                            "Deixe este programa aberto enquanto joga.",
-                            "Se aparecer um aviso do Windows, clique em Sim ou Permitir.",
-                        ).forEach { Text("•  $it", fontSize = 15.sp, lineHeight = 22.sp, color = Palette.Muted) }
+                    SideCard(t.notConnectingTitle) {
+                        t.notConnectingTips.forEach { Text("•  $it", fontSize = 15.sp, lineHeight = 22.sp, color = Palette.Muted) }
                     }
                 }
             }
@@ -144,19 +141,20 @@ private fun ColumnScope.PreparePc(container: DesktopContainer, checks: Checks, o
     val scope = rememberCoroutineScope()
     var busy by remember { mutableStateOf<String?>(null) }
     var message by remember { mutableStateOf<String?>(null) }
+    val t = Strings.current
 
-    Text("Vamos preparar seu PC", fontFamily = Fonts.Display, fontWeight = FontWeight.Bold, fontSize = 34.sp, color = Palette.Text, textAlign = TextAlign.Center)
+    Text(t.prepareTitle, fontFamily = Fonts.Display, fontWeight = FontWeight.Bold, fontSize = 34.sp, color = Palette.Text, textAlign = TextAlign.Center)
     Text(
-        "Um clique instala o volante virtual e libera a conexão com o celular. O Windows vai pedir sua permissão.",
+        t.prepareBody,
         fontSize = 16.sp,
         lineHeight = 23.sp,
         color = Palette.Muted,
         textAlign = TextAlign.Center,
     )
     Column(verticalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.padding(vertical = 8.dp)) {
-        TaskLine("Volante virtual (vJoy)", checks.driverOk && checks.axesOk && checks.deviceOk)
-        TaskLine("Conexão liberada no firewall", checks.firewallOk)
-        if (!checks.portOk) TaskLine("Porta de conexão livre", false)
+        TaskLine(t.taskVJoy, checks.driverOk && checks.axesOk && checks.deviceOk)
+        TaskLine(t.taskFirewall, checks.firewallOk)
+        if (!checks.portOk) TaskLine(t.taskPort, false)
     }
     Button(
         onClick = {
@@ -171,45 +169,46 @@ private fun ColumnScope.PreparePc(container: DesktopContainer, checks: Checks, o
         shape = RoundedCornerShape(16.dp),
         modifier = Modifier.height(60.dp).widthIn(min = 280.dp),
     ) {
-        Text(busy ?: "Preparar meu PC", fontSize = 18.sp, fontWeight = FontWeight.SemiBold)
+        Text(busy ?: t.prepareButton, fontSize = 18.sp, fontWeight = FontWeight.SemiBold)
     }
-    if (busy != null) Text("Confirme no aviso do Windows, se aparecer.", color = Palette.Warning, fontSize = 14.sp)
+    if (busy != null) Text(t.confirmWindowsPrompt, color = Palette.Warning, fontSize = 14.sp)
     message?.let {
         Text(it, color = Palette.Brake, fontSize = 14.sp, textAlign = TextAlign.Center)
-        TextButton(onClick = onTechnical) { Text("Ver detalhes técnicos", color = Palette.AccentText) }
+        TextButton(onClick = onTechnical) { Text(t.seeTechnicalDetails, color = Palette.AccentText) }
     }
 }
 
 /** Faz só o que falta, na ordem certa. Devolve uma mensagem se algo não deu certo. */
 private fun preparePc(container: DesktopContainer, onStep: (String) -> Unit): String? {
+    val t = Strings.current
     fun fail(result: SetupResult, what: String): String? = when (result) {
         SetupResult.Done -> null
-        SetupResult.Cancelled -> "$what foi cancelado no aviso do Windows. Tente de novo e clique em Sim."
-        is SetupResult.Failed -> "$what não deu certo: ${result.reason}"
+        SetupResult.Cancelled -> t.cancelled(what)
+        is SetupResult.Failed -> t.failed(what, result.reason)
     }
 
     var checks = container.checks()
     if (!checks.driverOk) {
-        onStep("Instalando o volante virtual…")
-        fail(container.setup.installVJoy(), "A instalação do vJoy")?.let { return it }
+        onStep(t.installing)
+        fail(container.setup.installVJoy(), t.whatInstallVJoy)?.let { return it }
         container.refreshDriver()
         checks = container.checks()
-        if (!checks.driverOk) return "O vJoy foi instalado, mas ainda não respondeu. Reinicie o PC e abra o programa de novo."
+        if (!checks.driverOk) return t.vjoyNeedsRestart
     }
     if (!checks.axesOk) {
-        onStep("Configurando o volante virtual…")
-        fail(container.setup.configureVJoyDevice(), "A configuração do vJoy")?.let { return it }
+        onStep(t.configuring)
+        fail(container.setup.configureVJoyDevice(), t.whatConfigureVJoy)?.let { return it }
         container.refreshDriver()
         checks = container.checks()
     }
     if (!checks.deviceOk) {
         container.refreshDriver()
         checks = container.checks()
-        if (!checks.deviceOk) return "O volante virtual está em uso por outro programa. Feche-o e tente de novo."
+        if (!checks.deviceOk) return t.vjoyInUse
     }
     if (!checks.firewallOk) {
-        onStep("Liberando a conexão…")
-        fail(container.setup.addFirewallRule(), "A liberação no firewall")?.let { return it }
+        onStep(t.openingFirewall)
+        fail(container.setup.addFirewallRule(), t.whatFirewall)?.let { return it }
     }
     if (!checks.portOk) return container.startError
     return null
@@ -218,11 +217,12 @@ private fun preparePc(container: DesktopContainer, onStep: (String) -> Unit): St
 @Composable
 private fun ColumnScope.ShowQr(container: DesktopContainer) {
     val payload = remember { container.pairingPayload() }
-    Text("Aponte o celular para cá", fontFamily = Fonts.Display, fontWeight = FontWeight.Bold, fontSize = 34.sp, color = Palette.Text, textAlign = TextAlign.Center)
+    val t = Strings.current
+    Text(t.pointPhoneHere, fontFamily = Fonts.Display, fontWeight = FontWeight.Bold, fontSize = 34.sp, color = Palette.Text, textAlign = TextAlign.Center)
     Text(
         buildAnnotatedString {
-            append("Abra o app Virtual Wheel Racing e toque em ")
-            withStyle(SpanStyle(color = Palette.Text, fontWeight = FontWeight.SemiBold)) { append("Escanear o código do PC") }
+            append(t.openAppAndTapStart)
+            withStyle(SpanStyle(color = Palette.Text, fontWeight = FontWeight.SemiBold)) { append(t.scanButtonName) }
             append(".")
         },
         fontSize = 16.sp,
@@ -231,27 +231,28 @@ private fun ColumnScope.ShowQr(container: DesktopContainer) {
         textAlign = TextAlign.Center,
     )
     if (payload == null) {
-        Text("Este PC não está em nenhuma rede. Conecte-o ao Wi-Fi ou ao cabo de rede e abra o programa de novo.", color = Palette.Brake, fontSize = 15.sp, textAlign = TextAlign.Center)
+        Text(t.noNetworkSimple, color = Palette.Brake, fontSize = 15.sp, textAlign = TextAlign.Center)
     } else {
         QrCode(payload.encode(), Modifier.size(280.dp))
     }
     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
         Box(Modifier.size(10.dp).background(Palette.Warning, CircleShape))
-        Text("Esperando o celular…", fontSize = 15.sp, color = Palette.Muted)
+        Text(t.waitingPhone, fontSize = 15.sp, color = Palette.Muted)
     }
-    Text("Já pareou antes? É só abrir o app e tocar em Jogar.", fontSize = 13.sp, color = Palette.Muted)
+    Text(t.pairedBefore, fontSize = 13.sp, color = Palette.Muted)
 }
 
 @Composable
 private fun ColumnScope.Connected(peer: String?) {
+    val t = Strings.current
     Box(Modifier.size(88.dp).background(Palette.Throttle, CircleShape), contentAlignment = Alignment.Center) {
         Canvas(Modifier.size(44.dp)) { drawCheck(Palette.Background) }
     }
-    Text("Conectado!", fontFamily = Fonts.Display, fontWeight = FontWeight.Bold, fontSize = 40.sp, color = Palette.Text)
-    Text("Abra seu jogo e acelere.", fontSize = 18.sp, color = Palette.Muted)
-    peer?.let { Text("Celular: $it", fontSize = 13.sp, color = Palette.Muted) }
+    Text(t.connectedTitle, fontFamily = Fonts.Display, fontWeight = FontWeight.Bold, fontSize = 40.sp, color = Palette.Text)
+    Text(t.openYourGame, fontSize = 18.sp, color = Palette.Muted)
+    peer?.let { Text(t.phone(it), fontSize = 13.sp, color = Palette.Muted) }
     Text(
-        "Primeira vez nesse jogo? No celular, toque em Configurar meu jogo.",
+        t.firstTimeHint,
         fontSize = 14.sp,
         color = Palette.Muted,
         textAlign = TextAlign.Center,

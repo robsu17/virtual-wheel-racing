@@ -34,7 +34,7 @@ fun QrCode(text: String, modifier: Modifier = Modifier) {
         modifier
             .background(Color.White, RoundedCornerShape(16.dp))
             .padding(16.dp)
-            .semantics { contentDescription = "Código QR de pareamento" },
+            .semantics { contentDescription = Strings.current.qrDescription },
     ) {
         val cell = size.minDimension / matrix.width
         for (y in 0 until matrix.height) {

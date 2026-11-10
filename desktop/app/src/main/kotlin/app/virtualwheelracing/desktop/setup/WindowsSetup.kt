@@ -1,5 +1,6 @@
 package app.virtualwheelracing.desktop.setup
 
+import app.virtualwheelracing.desktop.ui.Strings
 import app.virtualwheelracing.protocol.ProtocolDefaults
 import java.nio.file.Files
 import java.nio.file.Path
@@ -27,14 +28,14 @@ class WindowsSetup(
         get() = resourcesDir?.resolve("vJoySetup.exe")?.takeIf(Files::exists)
 
     fun installVJoy(): SetupResult {
-        val installer = bundledVJoyInstaller ?: return SetupResult.Failed("O instalador do vJoy não veio junto com o Virtual Wheel Racing.")
+        val installer = bundledVJoyInstaller ?: return SetupResult.Failed(Strings.current.errNoBundledVJoy)
         return runElevated(installer.toString(), "")
     }
 
     /** Recria o dispositivo 1 com os eixos e botões que o Virtual Wheel Racing usa. */
     fun configureVJoyDevice(): SetupResult {
         val config = vjoyDir.resolve("vJoyConfig.exe")
-        if (!Files.exists(config)) return SetupResult.Failed("vJoyConfig.exe não encontrado. Instale o vJoy primeiro.")
+        if (!Files.exists(config)) return SetupResult.Failed(Strings.current.errNoVJoyConfig)
         return runElevated(config.toString(), "1 -f -a x y z -b 16")
     }
 
@@ -51,7 +52,7 @@ class WindowsSetup(
     /** Libera a porta só para redes privadas e de domínio, e só para este programa. */
     fun addFirewallRule(): SetupResult {
         val program = ProcessHandle.current().info().command().orElse(null)
-            ?: return SetupResult.Failed("Não foi possível descobrir o caminho do programa.")
+            ?: return SetupResult.Failed(Strings.current.errNoProgramPath)
         val args = "advfirewall firewall add rule name=$RULE_NAME dir=in action=allow protocol=UDP " +
             "localport=${ProtocolDefaults.PORT} profile=private,domain program=\"$program\""
         return runElevated("netsh.exe", args)
@@ -71,15 +72,15 @@ class WindowsSetup(
             process.inputStream.bufferedReader().readText()
             if (!process.waitFor(10, TimeUnit.MINUTES)) {
                 process.destroy()
-                return SetupResult.Failed("A operação demorou demais.")
+                return SetupResult.Failed(Strings.current.errTimeout)
             }
             when (process.exitValue()) {
                 0 -> SetupResult.Done
                 CANCELLED_EXIT -> SetupResult.Cancelled
-                else -> SetupResult.Failed("O Windows devolveu o código ${process.exitValue()}.")
+                else -> SetupResult.Failed(Strings.current.errExitCode(process.exitValue()))
             }
         } catch (e: Exception) {
-            SetupResult.Failed(e.message ?: "Erro ao pedir permissão de administrador.")
+            SetupResult.Failed(e.message ?: Strings.current.errElevation)
         }
     }
 

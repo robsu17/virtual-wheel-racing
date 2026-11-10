@@ -1,5 +1,6 @@
 package app.virtualwheelracing.desktop
 
+import app.virtualwheelracing.desktop.ui.Strings
 import app.virtualwheelracing.desktop.receiver.ReceiverService
 import app.virtualwheelracing.desktop.setup.WindowsSetup
 import app.virtualwheelracing.desktop.vjoy.VJoyAdapter
@@ -45,7 +46,7 @@ class DesktopContainer : AutoCloseable {
         try {
             receiver.start()
         } catch (e: IOException) {
-            startError = "Não foi possível abrir a porta $port: ${e.message}"
+            startError = Strings.current.errPort(port, e.message)
         }
     }
 

@@ -48,7 +48,18 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-private enum class Section(val label: String) { PAINEL("Painel"), CONECTAR("Conectar celular"), VERIFICACAO("Verificação do PC") }
+private enum class Section {
+    PAINEL, CONECTAR, VERIFICACAO;
+
+    val label: String
+        get() = when (this) {
+            PAINEL -> Strings.current.sectionDashboard
+            CONECTAR -> Strings.current.sectionConnect
+            VERIFICACAO -> Strings.current.sectionCheck
+        }
+}
+
+private val t get() = Strings.current
 
 /** Estado da verificação do PC, recalculado depois de cada correção. */
 internal data class Checks(
@@ -148,85 +159,85 @@ private fun Sidebar(selected: Section, checksOk: Boolean, connected: Boolean, on
             }
         }
         Spacer(Modifier.weight(1f))
-        OutlinedButton(onClick = onSimple, modifier = Modifier.fillMaxWidth()) { Text("Voltar à tela simples") }
+        OutlinedButton(onClick = onSimple, modifier = Modifier.fillMaxWidth()) { Text(t.backToSimple) }
     }
 }
 
 @Composable
 private fun PainelSection(container: DesktopContainer, snapshot: app.virtualwheelracing.desktop.receiver.ReceiverSnapshot) {
-    PageTitle("Painel")
+    PageTitle(t.sectionDashboard)
     Row(horizontalArrangement = Arrangement.spacedBy(20.dp)) {
-        Panel("Celular", Modifier.weight(1f)) {
+        Panel(t.phonePanel, Modifier.weight(1f)) {
             val (text, fg, bg) = when {
-                !snapshot.connected && snapshot.peer != null -> Triple("Pareado (${snapshot.peer}), aguardando dados", Palette.Warning, Palette.WarnBackground)
-                !snapshot.connected -> Triple("Aguardando o celular", Palette.Muted, Palette.Surface2)
-                snapshot.health == LinkHealth.OK -> Triple("Conectado a ${snapshot.peer ?: "celular"}", Palette.Throttle, Palette.OkBackground)
-                snapshot.health == LinkHealth.WARNING -> Triple("Sinal instável", Palette.Warning, Palette.WarnBackground)
-                else -> Triple("Sem sinal · failsafe ativo", Palette.Brake, Palette.ErrorBackground)
+                !snapshot.connected && snapshot.peer != null -> Triple(t.pairedWaiting(snapshot.peer.toString()), Palette.Warning, Palette.WarnBackground)
+                !snapshot.connected -> Triple(t.waitingForPhone, Palette.Muted, Palette.Surface2)
+                snapshot.health == LinkHealth.OK -> Triple(t.connectedTo(snapshot.peer), Palette.Throttle, Palette.OkBackground)
+                snapshot.health == LinkHealth.WARNING -> Triple(t.unstableSignal, Palette.Warning, Palette.WarnBackground)
+                else -> Triple(t.noSignal, Palette.Brake, Palette.ErrorBackground)
             }
             Pill(text, fg, bg)
-            Label("Abra o Virtual Wheel Racing no celular e toque em Jogar.")
+            Label(t.dashboardPhoneHint)
         }
-        Panel("Volante virtual", Modifier.weight(1f)) {
+        Panel(t.virtualWheel, Modifier.weight(1f)) {
             Text(
-                if (container.openResult == OpenResult.Ok) "vJoy Device · ativo" else "vJoy indisponível",
+                if (container.openResult == OpenResult.Ok) t.vjoyActive else t.vjoyUnavailable,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.SemiBold,
                 color = if (container.openResult == OpenResult.Ok) Palette.Text else Palette.Brake,
             )
-            Label("Eixo X direção · Y acelerador · Z freio · 16 botões")
-            Label("Configure os controles nas opções de cada jogo.")
+            Label(t.axesSummary)
+            Label(t.configureInGames)
         }
     }
-    Panel("Entradas ao vivo", Modifier.fillMaxWidth()) {
-        AxisBar("Direção", snapshot.steering, centered = true, color = Palette.Accent)
+    Panel(t.liveInputs, Modifier.fillMaxWidth()) {
+        AxisBar(t.axisSteering, snapshot.steering, centered = true, color = Palette.Accent)
         Row(horizontalArrangement = Arrangement.spacedBy(20.dp)) {
-            Box(Modifier.weight(1f)) { AxisBar("Acelerador", snapshot.throttle, centered = false, color = Palette.Throttle) }
-            Box(Modifier.weight(1f)) { AxisBar("Freio", snapshot.brake, centered = false, color = Palette.Brake) }
+            Box(Modifier.weight(1f)) { AxisBar(t.axisThrottle, snapshot.throttle, centered = false, color = Palette.Throttle) }
+            Box(Modifier.weight(1f)) { AxisBar(t.axisBrake, snapshot.brake, centered = false, color = Palette.Brake) }
         }
         val pressed = (0 until 16).filter { snapshot.buttons and (1 shl it) != 0 }.map { it + 1 }
-        Label("Botões pressionados: ${if (pressed.isEmpty()) "nenhum" else pressed.joinToString(", ")}")
+        Label(t.buttonsPressed(if (pressed.isEmpty()) null else pressed.joinToString(", ")))
     }
-    Panel("Intervalo entre pacotes", Modifier.fillMaxWidth()) {
+    Panel(t.packetGaps, Modifier.fillMaxWidth()) {
         val s = snapshot.stats
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            StatTile("Pacotes/s", "${s.packetsPerSecond}")
-            StatTile("Típico (p50)", ms(s.gapP50Ms))
+            StatTile(t.packetsPerSecond, "${s.packetsPerSecond}")
+            StatTile(t.typical, ms(s.gapP50Ms))
             StatTile("p95", ms(s.gapP95Ms))
             StatTile("p99", ms(s.gapP99Ms))
-            StatTile("Maior falha", ms(s.maxGapMs))
-            StatTile("Perdidos", "${s.lost}")
-            StatTile("Rejeitados", "${s.rejected}")
+            StatTile(t.biggestGap, ms(s.maxGapMs))
+            StatTile(t.lost, "${s.lost}")
+            StatTile(t.rejected, "${s.rejected}")
         }
-        Label("Mede a regularidade da chegada, não o atraso total do celular até o jogo.")
+        Label(t.gapsNote)
     }
 }
 
 @Composable
 private fun ConectarSection(container: DesktopContainer) {
     var payload by remember { mutableStateOf(container.pairingPayload()) }
-    PageTitle("Conectar um celular", "No app Virtual Wheel Racing do Android, toque em Escanear o código do PC (ou em Ajustes > Trocar de PC) e aponte a câmera para este código.")
+    PageTitle(t.connectTitle, t.connectSubtitle)
     Row(horizontalArrangement = Arrangement.spacedBy(24.dp)) {
-        Panel("Código QR", Modifier.weight(1f)) {
+        Panel(t.qrCode, Modifier.weight(1f)) {
             val current = payload
             if (current == null) {
-                Text("Nenhuma rede local encontrada. Conecte o PC ao Wi-Fi ou ao cabo de rede.", color = Palette.Brake)
+                Text(t.noNetwork, color = Palette.Brake)
             } else {
                 QrCode(current.encode(), Modifier.size(280.dp))
             }
         }
-        Panel("Este PC", Modifier.weight(1f)) {
-            Label("Nome")
+        Panel(t.thisPc, Modifier.weight(1f)) {
+            Label(t.name)
             Text(container.pcName, fontFamily = Fonts.Display, fontSize = 26.sp, fontWeight = FontWeight.SemiBold, color = Palette.Text)
-            Label("Endereços na rede local")
+            Label(t.localAddresses)
             payload?.hosts?.forEach { Text(it, fontSize = 18.sp, color = Palette.Text) }
-            Label("Porta ${container.port} · celular e PC na mesma rede Wi-Fi")
+            Label(t.portNote(container.port))
             Spacer(Modifier.height(8.dp))
-            Label("O celular lembra deste PC. Gerar outro código desconecta os celulares pareados.")
+            Label(t.rememberNote)
             OutlinedButton(onClick = {
                 container.newPairingCode()
                 payload = container.pairingPayload()
-            }) { Text("Gerar novo código") }
+            }) { Text(t.newCode) }
         }
     }
 }
@@ -247,8 +258,8 @@ private fun VerificacaoSection(container: DesktopContainer, checks: Checks, onCh
                 r
             }
             message = when (result) {
-                SetupResult.Done -> "$label: concluído."
-                SetupResult.Cancelled -> "$label: cancelado no aviso do Windows."
+                SetupResult.Done -> t.fixDone(label)
+                SetupResult.Cancelled -> t.fixCancelled(label)
                 is SetupResult.Failed -> "$label: ${result.reason}"
             }
             onChecksChanged(withContext(Dispatchers.IO) { container.checks() })
@@ -256,39 +267,39 @@ private fun VerificacaoSection(container: DesktopContainer, checks: Checks, onCh
         }
     }
 
-    PageTitle("Verificação do PC", "Tudo precisa estar OK para o volante virtual funcionar nos jogos.")
-    Panel("Itens", Modifier.fillMaxWidth()) {
+    PageTitle(t.checkTitle, t.checkSubtitle)
+    Panel(t.items, Modifier.fillMaxWidth()) {
         CheckRow(
-            "Driver vJoy instalado",
+            t.checkDriver,
             checks.driverOk,
-            fix = if (container.setup.bundledVJoyInstaller != null) "Instalar vJoy" else null,
+            fix = if (container.setup.bundledVJoyInstaller != null) t.fixInstallVJoy else null,
             busy = busy,
-            onFix = { runFix("Instalar vJoy") { container.setup.installVJoy() } },
+            onFix = { runFix(t.fixInstallVJoy) { container.setup.installVJoy() } },
         )
         CheckRow(
-            "Dispositivo 1 com eixos X, Y, Z e 16 botões",
+            t.checkAxes,
             checks.driverOk && checks.axesOk,
-            fix = if (checks.driverOk) "Configurar automaticamente" else null,
+            fix = if (checks.driverOk) t.fixConfigure else null,
             busy = busy,
-            onFix = { runFix("Configurar o vJoy") { container.setup.configureVJoyDevice() } },
+            onFix = { runFix(t.labelConfigure) { container.setup.configureVJoyDevice() } },
         )
         CheckRow(
-            "Volante virtual pronto para o Virtual Wheel Racing",
+            t.checkDevice,
             checks.deviceOk,
-            fix = if (checks.driverOk && checks.axesOk) "Tentar de novo" else null,
+            fix = if (checks.driverOk && checks.axesOk) t.fixRetry else null,
             busy = busy,
-            onFix = { runFix("Reabrir o volante virtual") { SetupResult.Done } },
+            onFix = { runFix(t.labelReopen) { SetupResult.Done } },
         )
         CheckRow(
-            "Firewall liberado para a rede privada",
+            t.checkFirewall,
             checks.firewallOk,
-            fix = "Liberar no firewall",
+            fix = t.fixFirewall,
             busy = busy,
-            onFix = { runFix("Liberar no firewall") { container.setup.addFirewallRule() } },
+            onFix = { runFix(t.fixFirewall) { container.setup.addFirewallRule() } },
         )
-        CheckRow(container.startError ?: "Recebendo na porta ${container.port}", checks.portOk, fix = null, busy = busy, onFix = {})
-        Label("As correções pedem permissão de administrador pelo aviso do Windows.")
-        busy?.let { Text("$it… confirme no aviso do Windows.", color = Palette.Warning, fontSize = 14.sp) }
+        CheckRow(container.startError ?: t.receivingOnPort(container.port), checks.portOk, fix = null, busy = busy, onFix = {})
+        Label(t.adminNote)
+        busy?.let { Text(t.busyConfirm(it), color = Palette.Warning, fontSize = 14.sp) }
         message?.let { Text(it, color = Palette.Muted, fontSize = 14.sp) }
     }
 }
