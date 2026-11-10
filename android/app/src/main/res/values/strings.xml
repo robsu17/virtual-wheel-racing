@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- English (default). Portuguese lives in values-pt. -->
+<resources>
+    <string name="app_name" translatable="false">Virtual Wheel Racing</string>
+    <string name="app_name_prefix" translatable="false">"Virtual Wheel "</string>
+    <string name="app_name_highlight" translatable="false">Racing</string>
+
+    <!-- Common -->
+    <string name="back">Back</string>
+    <string name="logo_description">Virtual Wheel Racing logo</string>
+
+    <!-- Welcome -->
+    <string name="welcome_title_start">"Your phone becomes\na "</string>
+    <string name="welcome_title_highlight">steering wheel</string>
+    <string name="welcome_subtitle">Play Euro Truck, Assetto Corsa and other PC racing games by turning your phone.</string>
+    <string name="welcome_step1_title">Install the program on your PC</string>
+    <string name="welcome_step1_subtitle">It\'s free and takes a minute</string>
+    <string name="welcome_step2_title">Scan the code on the PC screen</string>
+    <string name="welcome_step2_subtitle">Only the first time</string>
+    <string name="welcome_step3_title">Open your game and drive</string>
+    <string name="welcome_step3_subtitle">We\'ll help you set it up</string>
+    <string name="scan_pc_code">Scan the PC code</string>
+    <string name="not_installed_on_pc">I haven\'t installed it on the PC yet</string>
+
+    <!-- QR scanning -->
+    <string name="scan_wrong_code">This QR code is not from Virtual Wheel Racing.</string>
+    <string name="scan_failed">Could not read the code: %1$s</string>
+
+    <!-- Pairing (change PC) -->
+    <string name="pairing_title">Connect to a PC</string>
+    <string name="pairing_body">Open Virtual Wheel Racing on Windows and point the camera at the QR code on the screen.</string>
+    <string name="pairing_frame_description">Frame for the QR code</string>
+    <string name="pairing_frame_hint">Tap Scan the PC code</string>
+    <string name="pairing_note">Phone and PC must be on the same Wi-Fi network, ideally 5 GHz. The phone remembers the PC; you only need to scan again if you switch PCs or create a new code.</string>
+
+    <!-- Home -->
+    <string name="settings">Settings</string>
+    <string name="all_set">All set!</string>
+    <string name="paired_with">Paired with %1$s</string>
+    <string name="play">PLAY</string>
+    <string name="play_hint">Turn the phone sideways and hold it like a steering wheel</string>
+    <string name="setup_my_game">Set up my game</string>
+    <string name="setup_my_game_subtitle">1-minute walkthrough</string>
+    <string name="steering">Steering</string>
+    <string name="feel_soft">Soft</string>
+    <string name="feel_normal">Normal</string>
+    <string name="feel_fast">Fast</string>
+    <string name="feel_custom">You are using a custom setting.</string>
+    <string name="tip_network">Tip: 5 GHz Wi-Fi and a wired PC make the steering faster.</string>
+
+    <!-- Games -->
+    <string name="game_ets2" translatable="false">Euro Truck</string>
+    <string name="game_assetto" translatable="false">Assetto Corsa</string>
+    <string name="game_beamng" translatable="false">BeamNG</string>
+    <string name="game_rfactor" translatable="false">rFactor</string>
+    <string name="game_other">Other</string>
+
+    <!-- Game guide -->
+    <string name="guide_subtitle">Only the first time in each game</string>
+    <string name="guide_ets2_1">In Options &gt; Controls, choose the \"Steering wheel and pedals\" or \"Keyboard + Joystick\" type.</string>
+    <string name="guide_ets2_2">Select vJoy Device as the controller.</string>
+    <string name="guide_ets2_3">For Steering, Throttle and Brake, click the field and use setup mode below.</string>
+    <string name="guide_ets2_tip">The same goes for American Truck Simulator.</string>
+    <string name="guide_assetto_1">In Content Manager or Options &gt; Controls, choose \"Wheel\".</string>
+    <string name="guide_assetto_2">Select vJoy Device.</string>
+    <string name="guide_assetto_3">Click Steering, Throttle and Brake and use setup mode below.</string>
+    <string name="guide_beamng_1">In Options &gt; Controls, find vJoy Device in the list.</string>
+    <string name="guide_beamng_2">Bind Steering, Throttle and Brake using setup mode below.</string>
+    <string name="guide_beamng_3">Under Steering filters, choose \"Direct\" for a wheel-like feel.</string>
+    <string name="guide_rfactor_1">In Controls, choose vJoy Device as the controller.</string>
+    <string name="guide_rfactor_2">Click Steering, Throttle and Brake and use setup mode below.</string>
+    <string name="guide_rfactor_3">No axis needs to be inverted.</string>
+    <string name="guide_rfactor_tip">Tested and approved in rFactor 1.</string>
+    <string name="guide_other_1">Find the game\'s Controls screen and choose vJoy Device.</string>
+    <string name="guide_other_2">For each control (Steering, Throttle, Brake), click the field and use setup mode below.</string>
+    <string name="guide_other_3">If a pedal works backwards, use the game\'s invert axis option.</string>
+    <string name="guide_other_tip">Games that only accept Xbox controllers may not detect it.</string>
+    <string name="setup_mode">Setup mode</string>
+    <string name="setup_mode_body">When the game asks for a control, tap it on the phone (Steering, Throttle or Brake) and move only that. This way the game won\'t mix them up.</string>
+    <string name="open_setup_mode">Open setup mode</string>
+    <string name="every_game">In every game</string>
+    <string name="every_game_deadzone">Set the game\'s deadzone to 0%: the app already handles it.</string>
+    <string name="every_game_ffb">Turn off force feedback: the phone can\'t push back.</string>
+
+    <!-- Driving -->
+    <string name="pedal_brake">BRAKE</string>
+    <string name="pedal_throttle">THROTTLE</string>
+    <string name="pedal_description">%1$s pedal</string>
+    <string name="back_home">Back to home</string>
+    <string name="connected">Connected</string>
+    <string name="searching_pc">Looking for the PC</string>
+    <string name="recenter">Center</string>
+    <string name="straighten_phone">Straighten the phone to steer again</string>
+    <string name="more_buttons">More buttons, page %1$d of %2$d</string>
+    <string name="button_description">Button %1$s</string>
+    <string name="gauge_description">Steering at %1$d percent</string>
+    <string name="gauge_caption">phone rotation · steering %1$d%%</string>
+    <string name="setting_up_in_game">Setting up in the game</string>
+    <string name="setting_up_body">In the game, pick the control. Here, tap the same control and move only it.</string>
+    <string name="axis_steering">Steering</string>
+    <string name="axis_throttle">Throttle</string>
+    <string name="axis_brake">Brake</string>
+    <string name="assign_none">None selected: everything goes to the game</string>
+    <string name="assign_one">Only this control is going to the game</string>
+    <string name="reconnecting">Reconnecting…</string>
+    <string name="searching_named">Looking for %1$s…</string>
+    <string name="lost_body">Your car has already stopped safely. Check that the PC is on and on the same Wi-Fi.</string>
+    <string name="searching_body">Keep Virtual Wheel Racing open on the PC and use the same Wi-Fi on both.</string>
+    <string name="error_open_failed">Could not open the connection: %1$s</string>
+    <string name="error_no_sensor">This phone does not have the rotation sensor needed.</string>
+    <string name="error_search_failed">Failed to look for the PC: %1$s</string>
+    <string name="error_send_failed">Failed to send: %1$s</string>
+
+    <!-- Settings -->
+    <string name="settings_subtitle">Apply to every game</string>
+    <string name="phone_rotation">Phone rotation</string>
+    <string name="phone_rotation_value">%1$d° each way</string>
+    <string name="phone_rotation_help">Less rotation makes steering faster. Wheel rotation is set in the game.</string>
+    <string name="deadzone">Deadzone</string>
+    <string name="deadzone_help">Ignores small shakes near the center. Set the game\'s deadzone to 0%.</string>
+    <string name="response">Response</string>
+    <string name="curve_linear">Linear</string>
+    <string name="curve_soft">Soft</string>
+    <string name="curve_firm">Firm</string>
+    <string name="pedals">Pedals</string>
+    <string name="brake_side">Brake is on the</string>
+    <string name="side_left">Left</string>
+    <string name="side_right">Right</string>
+    <string name="pedal_full_at">Pedal fully pressed at</string>
+    <string name="pedal_full_at_value">%1$d%% of travel</string>
+    <string name="pedal_full_at_help">With less travel, the pedal bottoms out without stretching your thumb.</string>
+    <string name="pc_and_sensors">PC and sensors</string>
+    <string name="change_pc">Change PC</string>
+    <string name="test_sensors">Test sensors</string>
+    <string name="test_sensors_subtitle">Check that the phone measures rotation correctly</string>
+    <string name="vibration">Event vibration</string>
+    <string name="vibration_subtitle">Coming soon: depends on game telemetry</string>
+
+    <!-- Calibration -->
+    <string name="calibration">Sensor test</string>
+    <string name="calibration_body">Hold the phone like a steering wheel, straight and at the height you\'ll play. Then tap Center.</string>
+    <string name="too_tilted">tilted too much</string>
+    <string name="current_angle">current angle</string>
+    <string name="done">Done</string>
+    <string name="sensor_test">Sensor test</string>
+    <string name="no_sensor">No sensor</string>
+    <string name="testing_percent">Testing %1$d%%</string>
+    <string name="all_good">All good</string>
+    <string name="reduced_mode">Reduced mode</string>
+    <string name="readings_per_second">Readings per second</string>
+    <string name="longest_wait">Longest wait (p95)</string>
+    <string name="repeated_readings">Repeated readings</string>
+    <string name="mode">Mode</string>
+    <string name="mode_full">Full</string>
+    <string name="mode_reduced">Reduced</string>
+    <string name="slow_sensor_note">On phones with a slow sensor, the app warns you and uses reduced mode.</string>
+    <string name="test_again">Test again</string>
+    <string name="phone_illustration">Phone held sideways, turning like a steering wheel</string>
+</resources>

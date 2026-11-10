@@ -1,5 +1,7 @@
 package app.virtualwheelracing.ui.components
 
+import app.virtualwheelracing.R
+import androidx.compose.ui.res.stringResource
 import android.content.pm.ActivityInfo
 import android.view.WindowManager
 import androidx.activity.compose.LocalActivity
@@ -78,7 +80,7 @@ fun IconSquareButton(description: String, onClick: () -> Unit, icon: DrawScope.(
 @Composable
 fun ScreenHeader(title: String, subtitle: String? = null, onBack: () -> Unit) {
     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-        IconSquareButton("Voltar", onBack) { drawBack(it) }
+        IconSquareButton(stringResource(R.string.back), onBack) { drawBack(it) }
         Column {
             Text(title, fontFamily = Fonts.Display, fontWeight = FontWeight.Bold, fontSize = 24.sp, color = Palette.Text)
             subtitle?.let { Text(it, fontSize = 12.sp, color = Palette.Muted) }

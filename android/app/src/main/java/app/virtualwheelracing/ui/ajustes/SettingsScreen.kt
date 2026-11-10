@@ -1,5 +1,7 @@
 package app.virtualwheelracing.ui.ajustes
 
+import app.virtualwheelracing.R
+import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -53,48 +55,48 @@ fun SettingsScreen(
             .padding(horizontal = 20.dp, vertical = 16.dp),
         verticalArrangement = Arrangement.spacedBy(14.dp),
     ) {
-        ScreenHeader("Ajustes", "Valem para todos os jogos", onBack)
+        ScreenHeader(stringResource(R.string.settings), stringResource(R.string.settings_subtitle), onBack)
 
         VwrCard {
-            SectionTitle("Direção")
+            SectionTitle(stringResource(R.string.steering))
             SliderSetting(
-                label = "Giro do celular",
-                value = "${settings.arcDegrees.roundToInt()}° para cada lado",
-                help = "Menos giro deixa a direção mais rápida. A rotação do volante é ajustada no jogo.",
+                label = stringResource(R.string.phone_rotation),
+                value = stringResource(R.string.phone_rotation_value, settings.arcDegrees.roundToInt()),
+                help = stringResource(R.string.phone_rotation_help),
                 current = settings.arcDegrees,
                 range = 60f..90f,
                 steps = 5,
                 onValue = { v -> onChange { it.copy(arcDegrees = v.roundToInt().toFloat()) } },
             )
             SliderSetting(
-                label = "Zona morta",
+                label = stringResource(R.string.deadzone),
                 value = "${"%.1f".format(settings.deadzoneDegrees)}°",
-                help = "Ignora tremidas pequenas perto do centro. Deixe a zona morta do jogo em 0%.",
+                help = stringResource(R.string.deadzone_help),
                 current = settings.deadzoneDegrees,
                 range = 0f..3f,
                 steps = 29,
                 onValue = { v -> onChange { it.copy(deadzoneDegrees = (v * 10).roundToInt() / 10f) } },
             )
-            Text("Resposta", fontSize = 14.sp, fontWeight = FontWeight.SemiBold, color = Palette.Text)
+            Text(stringResource(R.string.response), fontSize = 14.sp, fontWeight = FontWeight.SemiBold, color = Palette.Text)
             Segmented(
-                options = listOf(ResponseCurve.LINEAR to "Linear", ResponseCurve.SOFT to "Suave", ResponseCurve.FIRM to "Firme"),
+                options = listOf(ResponseCurve.LINEAR to stringResource(R.string.curve_linear), ResponseCurve.SOFT to stringResource(R.string.curve_soft), ResponseCurve.FIRM to stringResource(R.string.curve_firm)),
                 selected = settings.curve,
                 onSelect = { curve -> onChange { it.copy(curve = curve) } },
             )
         }
 
         VwrCard {
-            SectionTitle("Pedais")
-            Text("Freio fica do lado", fontSize = 14.sp, fontWeight = FontWeight.SemiBold, color = Palette.Text)
+            SectionTitle(stringResource(R.string.pedals))
+            Text(stringResource(R.string.brake_side), fontSize = 14.sp, fontWeight = FontWeight.SemiBold, color = Palette.Text)
             Segmented(
-                options = listOf(true to "Esquerdo", false to "Direito"),
+                options = listOf(true to stringResource(R.string.side_left), false to stringResource(R.string.side_right)),
                 selected = settings.brakeOnLeft,
                 onSelect = { left -> onChange { it.copy(brakeOnLeft = left) } },
             )
             SliderSetting(
-                label = "Pedal no fundo em",
-                value = "${(settings.pedalFullAt * 100).roundToInt()}% do curso",
-                help = "Com menos curso, o pedal chega ao fundo sem esticar o polegar.",
+                label = stringResource(R.string.pedal_full_at),
+                value = stringResource(R.string.pedal_full_at_value, (settings.pedalFullAt * 100).roundToInt()),
+                help = stringResource(R.string.pedal_full_at_help),
                 current = settings.pedalFullAt,
                 range = 0.6f..1f,
                 steps = 7,
@@ -103,16 +105,16 @@ fun SettingsScreen(
         }
 
         VwrCard {
-            SectionTitle("PC e sensores")
-            LinkRow("Trocar de PC", "Pareado com $pcName", onChangePc)
-            LinkRow("Testar sensores", "Confira se o celular mede o giro direito", onCalibration)
+            SectionTitle(stringResource(R.string.pc_and_sensors))
+            LinkRow(stringResource(R.string.change_pc), stringResource(R.string.paired_with, pcName), onChangePc)
+            LinkRow(stringResource(R.string.test_sensors), stringResource(R.string.test_sensors_subtitle), onCalibration)
         }
 
         VwrCard {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Column(Modifier.weight(1f)) {
-                    Text("Vibração por eventos", fontSize = 15.sp, fontWeight = FontWeight.SemiBold, color = Palette.Text)
-                    Text("Em breve: depende da telemetria do jogo", fontSize = 12.sp, color = Palette.Muted)
+                    Text(stringResource(R.string.vibration), fontSize = 15.sp, fontWeight = FontWeight.SemiBold, color = Palette.Text)
+                    Text(stringResource(R.string.vibration_subtitle), fontSize = 12.sp, color = Palette.Muted)
                 }
                 Switch(checked = false, onCheckedChange = null, enabled = false)
             }

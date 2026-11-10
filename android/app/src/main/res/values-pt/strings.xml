@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Português (Brasil e Portugal). O padrão em inglês fica em values. -->
+<resources>
+    <!-- Comum -->
+    <string name="back">Voltar</string>
+    <string name="logo_description">Logo do Virtual Wheel Racing</string>
+
+    <!-- Boas-vindas -->
+    <string name="welcome_title_start">"Seu celular vira\num "</string>
+    <string name="welcome_title_highlight">volante</string>
+    <string name="welcome_subtitle">Jogue Euro Truck, Assetto Corsa e outros jogos de corrida no PC girando o celular.</string>
+    <string name="welcome_step1_title">Instale o programa no PC</string>
+    <string name="welcome_step1_subtitle">É grátis e leva um minuto</string>
+    <string name="welcome_step2_title">Escaneie o código da tela do PC</string>
+    <string name="welcome_step2_subtitle">Só na primeira vez</string>
+    <string name="welcome_step3_title">Abra o jogo e acelere</string>
+    <string name="welcome_step3_subtitle">A gente te ajuda a configurar</string>
+    <string name="scan_pc_code">Escanear o código do PC</string>
+    <string name="not_installed_on_pc">Ainda não instalei no PC</string>
+
+    <!-- Leitura do QR -->
+    <string name="scan_wrong_code">Esse código QR não é do Virtual Wheel Racing.</string>
+    <string name="scan_failed">Não foi possível ler o código: %1$s</string>
+
+    <!-- Pareamento (trocar de PC) -->
+    <string name="pairing_title">Conectar ao PC</string>
+    <string name="pairing_body">Abra o Virtual Wheel Racing no Windows e aponte a câmera para o código QR que aparece na tela.</string>
+    <string name="pairing_frame_description">Moldura para o código QR</string>
+    <string name="pairing_frame_hint">Toque em Escanear o código do PC</string>
+    <string name="pairing_note">Celular e PC precisam estar na mesma rede Wi-Fi, de preferência 5 GHz. O celular lembra do PC; só é preciso ler o código de novo se você trocar de PC ou gerar outro código.</string>
+
+    <!-- Início -->
+    <string name="settings">Ajustes</string>
+    <string name="all_set">Tudo pronto!</string>
+    <string name="paired_with">Pareado com %1$s</string>
+    <string name="play">JOGAR</string>
+    <string name="play_hint">Gire o celular para a horizontal e segure como um volante</string>
+    <string name="setup_my_game">Configurar meu jogo</string>
+    <string name="setup_my_game_subtitle">Passo a passo de 1 minuto</string>
+    <string name="steering">Direção</string>
+    <string name="feel_soft">Suave</string>
+    <string name="feel_normal">Normal</string>
+    <string name="feel_fast">Rápida</string>
+    <string name="feel_custom">Você está usando um ajuste personalizado.</string>
+    <string name="tip_network">Dica: Wi-Fi 5 GHz e o PC no cabo deixam a direção mais rápida.</string>
+
+    <!-- Jogos -->
+    <string name="game_other">Outro</string>
+
+    <!-- Guia por jogo -->
+    <string name="guide_subtitle">Só na primeira vez em cada jogo</string>
+    <string name="guide_ets2_1">Em Opções &gt; Controles, escolha o tipo \"Volante e pedais\" ou \"Teclado + Joystick\".</string>
+    <string name="guide_ets2_2">Selecione o vJoy Device como controle.</string>
+    <string name="guide_ets2_3">Em Direção, Acelerador e Freio, clique no campo e use o modo configuração abaixo.</string>
+    <string name="guide_ets2_tip">Vale o mesmo para o American Truck Simulator.</string>
+    <string name="guide_assetto_1">No Content Manager ou em Opções &gt; Controles, escolha \"Volante\".</string>
+    <string name="guide_assetto_2">Selecione o vJoy Device.</string>
+    <string name="guide_assetto_3">Clique em Direção, Acelerador e Freio e use o modo configuração abaixo.</string>
+    <string name="guide_beamng_1">Em Opções &gt; Controles, encontre o vJoy Device na lista.</string>
+    <string name="guide_beamng_2">Associe Direção, Acelerador e Freio usando o modo configuração abaixo.</string>
+    <string name="guide_beamng_3">Em Filtros de direção, escolha \"Direto\" para sentir como um volante.</string>
+    <string name="guide_rfactor_1">Em Controles, escolha vJoy Device como controlador.</string>
+    <string name="guide_rfactor_2">Clique em Direção, Acelerador e Freio e use o modo configuração abaixo.</string>
+    <string name="guide_rfactor_3">Não é preciso inverter nenhum eixo.</string>
+    <string name="guide_rfactor_tip">Testado e aprovado no rFactor 1.</string>
+    <string name="guide_other_1">Procure a tela de Controles do jogo e escolha vJoy Device.</string>
+    <string name="guide_other_2">Para cada comando (Direção, Acelerador, Freio), clique no campo e use o modo configuração abaixo.</string>
+    <string name="guide_other_3">Se um pedal ficar ao contrário, use a opção de inverter eixo do jogo.</string>
+    <string name="guide_other_tip">Jogos que só aceitam controle de Xbox podem não reconhecer.</string>
+    <string name="setup_mode">Modo configuração</string>
+    <string name="setup_mode_body">Quando o jogo pedir um comando, toque nele no celular (Direção, Acelerador ou Freio) e mexa só aquilo. Assim o jogo não confunde um com o outro.</string>
+    <string name="open_setup_mode">Abrir modo configuração</string>
+    <string name="every_game">Em todo jogo</string>
+    <string name="every_game_deadzone">Zona morta do jogo em 0%: o app já cuida disso.</string>
+    <string name="every_game_ffb">Desligue o force feedback: o celular não empurra de volta.</string>
+
+    <!-- Direção -->
+    <string name="pedal_brake">FREIO</string>
+    <string name="pedal_throttle">ACELERAR</string>
+    <string name="pedal_description">Pedal %1$s</string>
+    <string name="back_home">Voltar ao início</string>
+    <string name="connected">Conectado</string>
+    <string name="searching_pc">Procurando o PC</string>
+    <string name="recenter">Centralizar</string>
+    <string name="straighten_phone">Endireite o celular para voltar a virar</string>
+    <string name="more_buttons">Mais botões, página %1$d de %2$d</string>
+    <string name="button_description">Botão %1$s</string>
+    <string name="gauge_description">Direção em %1$d por cento</string>
+    <string name="gauge_caption">giro do celular · direção %1$d%%</string>
+    <string name="setting_up_in_game">Configurando no jogo</string>
+    <string name="setting_up_body">No jogo, escolha o comando. Aqui, toque no mesmo comando e mexa só ele.</string>
+    <string name="axis_steering">Direção</string>
+    <string name="axis_throttle">Acelerador</string>
+    <string name="axis_brake">Freio</string>
+    <string name="assign_none">Nenhum escolhido: tudo vai junto para o jogo</string>
+    <string name="assign_one">Só esse comando está indo para o jogo</string>
+    <string name="reconnecting">Reconectando…</string>
+    <string name="searching_named">Procurando %1$s…</string>
+    <string name="lost_body">Seu carro já parou com segurança. Confira se o PC está ligado e no mesmo Wi-Fi.</string>
+    <string name="searching_body">Deixe o Virtual Wheel Racing aberto no PC e use o mesmo Wi-Fi nos dois.</string>
+    <string name="error_open_failed">Não foi possível abrir a conexão: %1$s</string>
+    <string name="error_no_sensor">Este celular não tem o sensor de rotação necessário.</string>
+    <string name="error_search_failed">Falha ao procurar o PC: %1$s</string>
+    <string name="error_send_failed">Falha ao enviar: %1$s</string>
+
+    <!-- Ajustes -->
+    <string name="settings_subtitle">Valem para todos os jogos</string>
+    <string name="phone_rotation">Giro do celular</string>
+    <string name="phone_rotation_value">%1$d° para cada lado</string>
+    <string name="phone_rotation_help">Menos giro deixa a direção mais rápida. A rotação do volante é ajustada no jogo.</string>
+    <string name="deadzone">Zona morta</string>
+    <string name="deadzone_help">Ignora tremidas pequenas perto do centro. Deixe a zona morta do jogo em 0%.</string>
+    <string name="response">Resposta</string>
+    <string name="curve_linear">Linear</string>
+    <string name="curve_soft">Suave</string>
+    <string name="curve_firm">Firme</string>
+    <string name="pedals">Pedais</string>
+    <string name="brake_side">Freio fica do lado</string>
+    <string name="side_left">Esquerdo</string>
+    <string name="side_right">Direito</string>
+    <string name="pedal_full_at">Pedal no fundo em</string>
+    <string name="pedal_full_at_value">%1$d%% do curso</string>
+    <string name="pedal_full_at_help">Com menos curso, o pedal chega ao fundo sem esticar o polegar.</string>
+    <string name="pc_and_sensors">PC e sensores</string>
+    <string name="change_pc">Trocar de PC</string>
+    <string name="test_sensors">Testar sensores</string>
+    <string name="test_sensors_subtitle">Confira se o celular mede o giro direito</string>
+    <string name="vibration">Vibração por eventos</string>
+    <string name="vibration_subtitle">Em breve: depende da telemetria do jogo</string>
+
+    <!-- Calibração -->
+    <string name="calibration">Teste dos sensores</string>
+    <string name="calibration_body">Segure o celular como um volante, reto e na altura em que vai jogar. Depois toque em Centralizar.</string>
+    <string name="too_tilted">inclinado demais</string>
+    <string name="current_angle">ângulo atual</string>
+    <string name="done">Concluir</string>
+    <string name="sensor_test">Teste dos sensores</string>
+    <string name="no_sensor">Sem sensor</string>
+    <string name="testing_percent">Testando %1$d%%</string>
+    <string name="all_good">Tudo certo</string>
+    <string name="reduced_mode">Modo reduzido</string>
+    <string name="readings_per_second">Leituras por segundo</string>
+    <string name="longest_wait">Maior espera (p95)</string>
+    <string name="repeated_readings">Leituras repetidas</string>
+    <string name="mode">Modo</string>
+    <string name="mode_full">Completo</string>
+    <string name="mode_reduced">Reduzido</string>
+    <string name="slow_sensor_note">Em celulares com sensor lento, o app avisa e usa o modo reduzido.</string>
+    <string name="test_again">Testar de novo</string>
+    <string name="phone_illustration">Celular na horizontal, girando como um volante</string>
+</resources>

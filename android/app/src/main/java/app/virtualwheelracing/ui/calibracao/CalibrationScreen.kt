@@ -1,5 +1,7 @@
 package app.virtualwheelracing.ui.calibracao
 
+import app.virtualwheelracing.R
+import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -84,9 +86,9 @@ fun CalibrationScreen(container: AppContainer, onBack: () -> Unit) {
         horizontalArrangement = Arrangement.spacedBy(20.dp),
     ) {
         Column(Modifier.weight(1f).fillMaxHeight(), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-            ScreenHeader("Calibração", onBack = onBack)
+            ScreenHeader(stringResource(R.string.calibration), onBack = onBack)
             Text(
-                "Segure o celular como um volante, reto e na altura em que vai jogar. Depois toque em Recentrar.",
+                stringResource(R.string.calibration_body),
                 fontSize = 14.sp,
                 color = Palette.Muted,
                 lineHeight = 20.sp,
@@ -107,7 +109,7 @@ fun CalibrationScreen(container: AppContainer, onBack: () -> Unit) {
                         color = Palette.Text,
                     )
                     Text(
-                        if (snapshot?.tilted == true) "inclinado demais" else "ângulo atual",
+                        if (snapshot?.tilted == true) stringResource(R.string.too_tilted) else stringResource(R.string.current_angle),
                         fontSize = 12.sp,
                         color = if (snapshot?.tilted == true) Palette.Warning else Palette.Muted,
                     )
@@ -115,9 +117,9 @@ fun CalibrationScreen(container: AppContainer, onBack: () -> Unit) {
             }
             Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                 Button(onClick = { diagnostics?.recenter() }, modifier = Modifier.height(48.dp)) {
-                    Text("Recentrar", fontWeight = FontWeight.SemiBold)
+                    Text(stringResource(R.string.recenter), fontWeight = FontWeight.SemiBold)
                 }
-                OutlinedButton(onClick = onBack, modifier = Modifier.height(48.dp)) { Text("Concluir") }
+                OutlinedButton(onClick = onBack, modifier = Modifier.height(48.dp)) { Text(stringResource(R.string.done)) }
             }
         }
 
@@ -128,6 +130,8 @@ fun CalibrationScreen(container: AppContainer, onBack: () -> Unit) {
 @Composable
 private fun DiagnosticsCard(snapshot: DiagnosticsSnapshot?, onRetry: () -> Unit) {
     val stats: SensorStats? = snapshot?.stats
+    val modeFull = stringResource(R.string.mode_full)
+    val modeReduced = stringResource(R.string.mode_reduced)
     Column(
         modifier = Modifier
             .width(320.dp)
@@ -139,7 +143,7 @@ private fun DiagnosticsCard(snapshot: DiagnosticsSnapshot?, onRetry: () -> Unit)
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
-                "Teste dos sensores",
+                stringResource(R.string.sensor_test),
                 fontFamily = Fonts.Display,
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 18.sp,
@@ -147,37 +151,38 @@ private fun DiagnosticsCard(snapshot: DiagnosticsSnapshot?, onRetry: () -> Unit)
                 modifier = Modifier.weight(1f),
             )
             when {
-                snapshot?.sensorAvailable == false -> StatusChip("Sem sensor", Palette.Brake, Palette.ErrorBackground)
-                stats == null -> StatusChip("Testando ${((snapshot?.progress ?: 0f) * 100).roundToInt()}%", Palette.Muted, Palette.Surface2)
-                stats.fullMode -> StatusChip("Tudo certo", Palette.Throttle, Palette.OkBackground)
-                else -> StatusChip("Modo reduzido", Palette.Warning, Palette.WarnBackground)
+                snapshot?.sensorAvailable == false -> StatusChip(stringResource(R.string.no_sensor), Palette.Brake, Palette.ErrorBackground)
+                stats == null -> StatusChip(stringResource(R.string.testing_percent, ((snapshot?.progress ?: 0f) * 100).roundToInt()), Palette.Muted, Palette.Surface2)
+                stats.fullMode -> StatusChip(stringResource(R.string.all_good), Palette.Throttle, Palette.OkBackground)
+                else -> StatusChip(stringResource(R.string.reduced_mode), Palette.Warning, Palette.WarnBackground)
             }
         }
         Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-            StatTile("Leituras por segundo", stats?.let { "${it.rateHz} Hz" } ?: "…", Modifier.weight(1f))
-            StatTile("Maior espera (p95)", stats?.let { "%.1f ms".format(it.p95IntervalMs) } ?: "…", Modifier.weight(1f))
+            StatTile(stringResource(R.string.readings_per_second), stats?.let { "${it.rateHz} Hz" } ?: "…", Modifier.weight(1f))
+            StatTile(stringResource(R.string.longest_wait), stats?.let { "%.1f ms".format(it.p95IntervalMs) } ?: "…", Modifier.weight(1f))
         }
         Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-            StatTile("Leituras repetidas", stats?.let { "${it.repeatedPercent.roundToInt()}%" } ?: "…", Modifier.weight(1f))
-            StatTile("Modo", stats?.let { if (it.fullMode) "Completo" else "Reduzido" } ?: "…", Modifier.weight(1f))
+            StatTile(stringResource(R.string.repeated_readings), stats?.let { "${it.repeatedPercent.roundToInt()}%" } ?: "…", Modifier.weight(1f))
+            StatTile(stringResource(R.string.mode), stats?.let { if (it.fullMode) modeFull else modeReduced } ?: "…", Modifier.weight(1f))
         }
         Text(
-            "Em celulares com sensor lento, o app avisa e usa o modo reduzido.",
+            stringResource(R.string.slow_sensor_note),
             fontSize = 12.sp,
             color = Palette.Muted,
         )
         Spacer(Modifier.weight(1f))
-        OutlinedButton(onClick = onRetry, modifier = Modifier.fillMaxWidth().height(44.dp)) { Text("Testar de novo") }
+        OutlinedButton(onClick = onRetry, modifier = Modifier.fillMaxWidth().height(44.dp)) { Text(stringResource(R.string.test_again)) }
     }
 }
 
 /** Celular na horizontal, girando junto com o ângulo medido. */
 @Composable
 private fun PhoneIllustration(degrees: Float) {
+    val description = stringResource(R.string.phone_illustration)
     Canvas(
         Modifier
             .size(width = 220.dp, height = 130.dp)
-            .semantics { contentDescription = "Celular na horizontal, girando como um volante" },
+            .semantics { contentDescription = description },
     ) {
         rotate(degrees) {
             val w = size.width * 0.72f

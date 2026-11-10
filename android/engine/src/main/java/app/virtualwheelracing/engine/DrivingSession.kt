@@ -78,7 +78,7 @@ class DrivingSession(
     @Volatile private var packetsSent = 0L
     @Volatile private var tilted = false
     @Volatile private var sensorAvailable = true
-    @Volatile private var lastError: String? = null
+    @Volatile private var lastError: SessionError? = null
     @Volatile private var assignment: AxisAssignment? = null
 
     fun start() {
@@ -100,10 +100,10 @@ class DrivingSession(
                 }
             } catch (e: Exception) {
                 // Nenhuma falha de rede pode derrubar o app: vira mensagem na tela.
-                lastError = "Não foi possível abrir a conexão: ${e.message}"
+                lastError = SessionError(SessionError.Kind.OPEN_FAILED, e.message)
             }
             sensorAvailable = orientation.start(this, engineHandler)
-            if (!sensorAvailable) lastError = "Este celular não tem o sensor de rotação necessário."
+            if (!sensorAvailable) lastError = SessionError(SessionError.Kind.NO_SENSOR, null)
             engineHandler.post(tick)
         }
     }
@@ -194,7 +194,7 @@ class DrivingSession(
         try {
             link.sendToCandidates(txBuffer, txBuffer.size)
         } catch (e: Exception) {
-            lastError = "Falha ao procurar o PC: ${e.message}"
+            lastError = SessionError(SessionError.Kind.SEARCH_FAILED, e.message)
         }
         lastHelloNanos = nowNanos
     }
@@ -267,9 +267,9 @@ class DrivingSession(
             packetsSent++
             if (lastError != null && sensorAvailable) lastError = null
         } catch (e: IOException) {
-            lastError = "Falha ao enviar: ${e.message}"
+            lastError = SessionError(SessionError.Kind.SEND_FAILED, e.message)
         } catch (e: RuntimeException) {
-            lastError = "Falha ao enviar: ${e.message}"
+            lastError = SessionError(SessionError.Kind.SEND_FAILED, e.message)
         }
         lastSendNanos = nowNanos
     }
@@ -308,5 +308,10 @@ data class EngineSnapshot(
     val packetsSent: Long,
     val tilted: Boolean,
     val sensorAvailable: Boolean,
-    val error: String?,
+    val error: SessionError?,
 )
+
+/** Falha mostrada na tela; o texto é traduzido pelo app, o [detail] vem do sistema. */
+data class SessionError(val kind: Kind, val detail: String?) {
+    enum class Kind { OPEN_FAILED, NO_SENSOR, SEARCH_FAILED, SEND_FAILED }
+}

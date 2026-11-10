@@ -1,5 +1,7 @@
 package app.virtualwheelracing.ui.conectar
 
+import app.virtualwheelracing.R
+import androidx.compose.ui.res.stringResource
 import android.content.Context
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -59,13 +61,13 @@ fun ConectarScreen(onPaired: (PairingPayload) -> Unit, onBack: (() -> Unit)?) {
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         if (onBack != null) {
-            ScreenHeader("Conectar ao PC", onBack = onBack)
+            ScreenHeader(stringResource(R.string.pairing_title), onBack = onBack)
         } else {
-            Text("Virtual Wheel Racing", fontFamily = Fonts.Display, fontWeight = FontWeight.Bold, fontSize = 26.sp, color = Palette.Text)
-            Text("Conectar ao PC", fontFamily = Fonts.Display, fontWeight = FontWeight.SemiBold, fontSize = 20.sp, color = Palette.Text)
+            Text(stringResource(R.string.app_name), fontFamily = Fonts.Display, fontWeight = FontWeight.Bold, fontSize = 26.sp, color = Palette.Text)
+            Text(stringResource(R.string.pairing_title), fontFamily = Fonts.Display, fontWeight = FontWeight.SemiBold, fontSize = 20.sp, color = Palette.Text)
         }
         Text(
-            "Abra o Virtual Wheel Racing no Windows e aponte a câmera para o código QR que aparece na tela.",
+            stringResource(R.string.pairing_body),
             fontSize = 15.sp,
             color = Palette.Muted,
             lineHeight = 21.sp,
@@ -87,14 +89,13 @@ fun ConectarScreen(onPaired: (PairingPayload) -> Unit, onBack: (() -> Unit)?) {
             modifier = Modifier.fillMaxWidth().height(52.dp),
             shape = RoundedCornerShape(14.dp),
         ) {
-            Text("Ler código QR", fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
+            Text(stringResource(R.string.scan_pc_code), fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
         }
         error?.let { Text(it, color = Palette.Brake, fontSize = 14.sp) }
 
         VwrCard {
             Text(
-                "Celular e PC precisam estar na mesma rede Wi-Fi, de preferência 5 GHz. O celular lembra do PC; " +
-                    "só é preciso ler o código de novo se você trocar de PC ou gerar outro código.",
+                stringResource(R.string.pairing_note),
                 fontSize = 13.sp,
                 color = Palette.Muted,
                 lineHeight = 19.sp,
@@ -106,13 +107,14 @@ fun ConectarScreen(onPaired: (PairingPayload) -> Unit, onBack: (() -> Unit)?) {
 /** Moldura de visor, como no design; a câmera de verdade abre no leitor do Google. */
 @Composable
 private fun ViewfinderIllustration() {
+    val frameDescription = stringResource(R.string.pairing_frame_description)
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .height(220.dp)
             .background(androidx.compose.ui.graphics.Color(0xFF07080A), RoundedCornerShape(20.dp))
             .border(1.dp, Palette.Line, RoundedCornerShape(20.dp))
-            .semantics { contentDescription = "Moldura para o código QR" },
+            .semantics { contentDescription = frameDescription },
         contentAlignment = Alignment.Center,
     ) {
         Canvas(Modifier.size(150.dp)) {
@@ -127,7 +129,7 @@ private fun ViewfinderIllustration() {
             drawLine(Palette.Accent, Offset(w * 0.1f, w * 0.46f), Offset(w * 0.9f, w * 0.46f), strokeWidth = 2.dp.toPx())
         }
         Row(Modifier.align(Alignment.BottomCenter).padding(bottom = 12.dp)) {
-            Text("Toque em Ler código QR", fontSize = 13.sp, color = Palette.Muted)
+            Text(stringResource(R.string.pairing_frame_hint), fontSize = 13.sp, color = Palette.Muted)
         }
     }
 }
@@ -144,7 +146,7 @@ fun scanPairingCode(context: Context, onPaired: (PairingPayload) -> Unit, onErro
         .startScan()
         .addOnSuccessListener { barcode ->
             val pairing = barcode.rawValue?.let(PairingPayload::parse)
-            if (pairing != null) onPaired(pairing) else onError("Esse código QR não é do Virtual Wheel Racing.")
+            if (pairing != null) onPaired(pairing) else onError(context.getString(R.string.scan_wrong_code))
         }
-        .addOnFailureListener { e -> onError("Não foi possível ler o código: ${e.message}") }
+        .addOnFailureListener { e -> onError(context.getString(R.string.scan_failed, e.message.orEmpty())) }
 }

@@ -80,7 +80,7 @@ class UdpLink(private val hosts: List<String>, private val pcPort: Int) : Packet
 
     override fun send(buffer: ByteArray, length: Int) {
         val s = requireSocket()
-        val target = peer ?: throw IOException("O PC ainda não respondeu")
+        val target = peer ?: throw IOException("PC has not answered yet")
         val p = sendPacket?.takeIf { it.data === buffer } ?: DatagramPacket(buffer, length).also { sendPacket = it }
         p.length = length
         p.socketAddress = target

@@ -1,5 +1,8 @@
 package app.virtualwheelracing.ui.inicio
 
+import app.virtualwheelracing.ui.guia.Game
+import androidx.annotation.StringRes
+import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -54,10 +57,10 @@ import app.virtualwheelracing.ui.theme.Fonts
 import app.virtualwheelracing.ui.theme.Palette
 
 /** Três jeitos simples de ajustar a direção, no lugar de graus e curvas. */
-enum class SteeringFeel(val label: String, val arcDegrees: Float, val curve: ResponseCurve) {
-    SOFT("Suave", 90f, ResponseCurve.SOFT),
-    NORMAL("Normal", 90f, ResponseCurve.LINEAR),
-    FAST("Rápida", 60f, ResponseCurve.LINEAR);
+enum class SteeringFeel(@StringRes val label: Int, val arcDegrees: Float, val curve: ResponseCurve) {
+    SOFT(R.string.feel_soft, 90f, ResponseCurve.SOFT),
+    NORMAL(R.string.feel_normal, 90f, ResponseCurve.LINEAR),
+    FAST(R.string.feel_fast, 60f, ResponseCurve.LINEAR);
 
     fun applyTo(settings: GlobalSettings) = settings.copy(arcDegrees = arcDegrees, curve = curve)
 
@@ -77,6 +80,8 @@ fun HomeScreen(
     onGuide: () -> Unit,
     onDrive: () -> Unit,
 ) {
+    val appPrefix = stringResource(R.string.app_name_prefix)
+    val appHighlight = stringResource(R.string.app_name_highlight)
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -89,8 +94,8 @@ fun HomeScreen(
             Image(painterResource(R.drawable.logo_tile), contentDescription = null, modifier = Modifier.size(40.dp))
             Text(
                 buildAnnotatedString {
-                    append("Virtual Wheel ")
-                    withStyle(SpanStyle(color = Palette.AccentText)) { append("Racing") }
+                    append(appPrefix)
+                    withStyle(SpanStyle(color = Palette.AccentText)) { append(appHighlight) }
                 },
                 fontFamily = Fonts.Display,
                 fontWeight = FontWeight.Bold,
@@ -98,7 +103,7 @@ fun HomeScreen(
                 color = Palette.Text,
                 modifier = Modifier.weight(1f),
             )
-            IconSquareButton("Ajustes", onSettings) { drawSliders(it) }
+            IconSquareButton(stringResource(R.string.settings), onSettings) { drawSliders(it) }
         }
 
         Column(
@@ -122,8 +127,8 @@ fun HomeScreen(
                     }
                 }
                 Column {
-                    Text("Tudo pronto!", fontFamily = Fonts.Display, fontWeight = FontWeight.Bold, fontSize = 24.sp, color = Palette.Text)
-                    Text("Pareado com ${pairing.pcName}", fontSize = 14.sp, color = Color(0xFFCFF5E3))
+                    Text(stringResource(R.string.all_set), fontFamily = Fonts.Display, fontWeight = FontWeight.Bold, fontSize = 24.sp, color = Palette.Text)
+                    Text(stringResource(R.string.paired_with, pairing.pcName), fontSize = 14.sp, color = Color(0xFFCFF5E3))
                 }
             }
 
@@ -138,10 +143,10 @@ fun HomeScreen(
             ) {
                 Canvas(Modifier.size(44.dp)) { drawWheelIcon(Palette.OnAccent) }
                 Spacer(Modifier.height(6.dp))
-                Text("JOGAR", fontFamily = Fonts.Display, fontWeight = FontWeight.Bold, fontSize = 30.sp, letterSpacing = 1.2.sp, color = Palette.OnAccent)
+                Text(stringResource(R.string.play), fontFamily = Fonts.Display, fontWeight = FontWeight.Bold, fontSize = 30.sp, letterSpacing = 1.2.sp, color = Palette.OnAccent)
             }
             Text(
-                "Gire o celular para a horizontal e segure como um volante",
+                stringResource(R.string.play_hint),
                 fontSize = 13.sp,
                 color = Palette.Muted,
                 textAlign = TextAlign.Center,
@@ -159,18 +164,18 @@ fun HomeScreen(
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Column(Modifier.weight(1f)) {
-                        Text("Configurar meu jogo", fontSize = 16.sp, fontWeight = FontWeight.SemiBold, color = Palette.Text)
-                        Text("Passo a passo de 1 minuto", fontSize = 13.sp, color = Palette.Muted)
+                        Text(stringResource(R.string.setup_my_game), fontSize = 16.sp, fontWeight = FontWeight.SemiBold, color = Palette.Text)
+                        Text(stringResource(R.string.setup_my_game_subtitle), fontSize = 13.sp, color = Palette.Muted)
                     }
                     Canvas(Modifier.size(18.dp)) { drawChevronRight(Palette.Muted) }
                 }
                 FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                    listOf("Euro Truck", "Assetto Corsa", "BeamNG", "rFactor", "Outro").forEach { game ->
+                    Game.entries.forEach { game ->
                         Text(
-                            game,
+                            stringResource(game.label),
                             fontSize = 12.sp,
                             fontWeight = FontWeight.SemiBold,
-                            color = if (game == "Outro") Palette.Muted else Palette.Text,
+                            color = if (game == Game.OTHER) Palette.Muted else Palette.Text,
                             modifier = Modifier.background(Palette.Surface2, RoundedCornerShape(999.dp)).padding(horizontal = 10.dp, vertical = 6.dp),
                         )
                     }
@@ -185,15 +190,15 @@ fun HomeScreen(
                     .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(10.dp),
             ) {
-                Text("Direção", fontSize = 16.sp, fontWeight = FontWeight.SemiBold, color = Palette.Text)
+                Text(stringResource(R.string.steering), fontSize = 16.sp, fontWeight = FontWeight.SemiBold, color = Palette.Text)
                 val current = SteeringFeel.of(settings)
                 Segmented(
-                    options = SteeringFeel.entries.map { it to it.label },
+                    options = SteeringFeel.entries.map { it to stringResource(it.label) },
                     selected = current,
                     onSelect = { feel -> feel?.let(onFeel) },
                 )
                 if (current == null) {
-                    Text("Você está usando um ajuste personalizado.", fontSize = 12.sp, color = Palette.Muted)
+                    Text(stringResource(R.string.feel_custom), fontSize = 12.sp, color = Palette.Muted)
                 }
             }
         }
@@ -205,7 +210,7 @@ fun HomeScreen(
                 drawLine(Palette.Warning, Offset(w * 0.38f, w * 0.88f), Offset(w * 0.62f, w * 0.88f), strokeWidth = 2.dp.toPx(), cap = StrokeCap.Round)
             }
             Text(
-                "Dica: Wi-Fi 5 GHz e o PC no cabo deixam a direção mais rápida.",
+                stringResource(R.string.tip_network),
                 fontSize = 13.sp,
                 lineHeight = 18.sp,
                 color = Palette.Muted,

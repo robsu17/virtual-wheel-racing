@@ -1,5 +1,8 @@
 package app.virtualwheelracing.ui.dirigir
 
+import app.virtualwheelracing.engine.SessionError
+import app.virtualwheelracing.R
+import androidx.compose.ui.res.stringResource
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -127,8 +130,8 @@ fun DirigirScreen(container: AppContainer, pairing: PairingPayload, settings: Gl
             modifier = Modifier.fillMaxSize().safeDrawingPadding().padding(12.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            val brake: @Composable () -> Unit = { Pedal("FREIO", Palette.Brake, PedalIcon.BRAKE) { controls?.brakePosition = it } }
-            val throttle: @Composable () -> Unit = { Pedal("ACELERAR", Palette.Throttle, PedalIcon.THROTTLE) { controls?.throttlePosition = it } }
+            val brake: @Composable () -> Unit = { Pedal(stringResource(R.string.pedal_brake), Palette.Brake, PedalIcon.BRAKE) { controls?.brakePosition = it } }
+            val throttle: @Composable () -> Unit = { Pedal(stringResource(R.string.pedal_throttle), Palette.Throttle, PedalIcon.THROTTLE) { controls?.throttlePosition = it } }
             if (settings.brakeOnLeft) brake() else throttle()
             CenterPanel(
                 snapshot = snapshot,
@@ -158,6 +161,7 @@ private enum class PedalIcon { BRAKE, THROTTLE }
 private fun Pedal(label: String, color: Color, icon: PedalIcon, onPosition: (Float) -> Unit) {
     val level = remember { mutableFloatStateOf(0f) }
     val shape = RoundedCornerShape(26.dp)
+    val description = stringResource(R.string.pedal_description, label)
     Column(
         modifier = Modifier
             .width(150.dp)
@@ -169,7 +173,7 @@ private fun Pedal(label: String, color: Color, icon: PedalIcon, onPosition: (Flo
                 val h = size.height * level.floatValue
                 drawRect(color.copy(alpha = 0.35f), topLeft = Offset(0f, size.height - h), size = Size(size.width, h))
             }
-            .semantics { contentDescription = "Pedal $label" }
+            .semantics { contentDescription = description }
             .pointerInput(Unit) {
                 awaitEachGesture {
                     val down = awaitFirstDown(requireUnconsumed = false)
@@ -226,16 +230,16 @@ private fun RowScope.CenterPanel(
     var page by remember { mutableIntStateOf(0) }
     Column(Modifier.weight(1f).fillMaxHeight(), verticalArrangement = Arrangement.spacedBy(10.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-            IconSquareButton("Voltar ao início", onBack) { drawBack(it) }
+            IconSquareButton(stringResource(R.string.back_home), onBack) { drawBack(it) }
             Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
                 if (snapshot?.linkState == LinkState.CONNECTED) {
-                    StatusChip("Conectado", Palette.Throttle, Palette.OkBackground)
+                    StatusChip(stringResource(R.string.connected), Palette.Throttle, Palette.OkBackground)
                 } else {
-                    StatusChip("Procurando o PC", Palette.Warning, Palette.WarnBackground)
+                    StatusChip(stringResource(R.string.searching_pc), Palette.Warning, Palette.WarnBackground)
                 }
             }
             Button(onClick = onRecenter, modifier = Modifier.height(44.dp), shape = RoundedCornerShape(12.dp)) {
-                Text("Centralizar", fontWeight = FontWeight.SemiBold, fontSize = 15.sp)
+                Text(stringResource(R.string.recenter), fontWeight = FontWeight.SemiBold, fontSize = 15.sp)
             }
         }
 
@@ -246,7 +250,7 @@ private fun RowScope.CenterPanel(
                 SteeringGauge(snapshot?.steering ?: 0f, snapshot?.phoneDegrees ?: 0f, Modifier.fillMaxSize())
                 if (snapshot?.tilted == true) {
                     Text(
-                        "Endireite o celular para voltar a virar",
+                        stringResource(R.string.straighten_phone),
                         color = Palette.Warning,
                         fontSize = 13.sp,
                         fontWeight = FontWeight.SemiBold,
@@ -259,6 +263,7 @@ private fun RowScope.CenterPanel(
             }
         }
 
+        val moreButtons = stringResource(R.string.more_buttons, page + 1, PAGES)
         Row(horizontalArrangement = Arrangement.spacedBy(10.dp), verticalAlignment = Alignment.CenterVertically) {
             for (column in 0 until BUTTONS_PER_PAGE) {
                 GameButton(page * BUTTONS_PER_PAGE + column, controls)
@@ -268,7 +273,7 @@ private fun RowScope.CenterPanel(
                     .size(52.dp)
                     .background(Palette.Surface2, RoundedCornerShape(16.dp))
                     .clickable(role = Role.Button) { page = (page + 1) % PAGES }
-                    .semantics { contentDescription = "Mais botões, página ${page + 1} de $PAGES" },
+                    .semantics { contentDescription = moreButtons },
                 contentAlignment = Alignment.Center,
             ) {
                 Text("${page + 1}/$PAGES", color = Palette.Muted, fontSize = 13.sp, fontWeight = FontWeight.SemiBold)
@@ -280,11 +285,13 @@ private fun RowScope.CenterPanel(
 /** Arco de 180°: o ponto mostra a direção enviada ao jogo; o número, o giro do celular. */
 @Composable
 private fun SteeringGauge(steering: Float, phoneDegrees: Float, modifier: Modifier) {
+    val percent = (steering * 100).roundToInt()
+    val description = stringResource(R.string.gauge_description, percent)
     Box(modifier, contentAlignment = Alignment.BottomCenter) {
         Canvas(
             Modifier
                 .fillMaxSize()
-                .semantics { contentDescription = "Direção em ${(steering * 100).roundToInt()} por cento" },
+                .semantics { contentDescription = description },
         ) {
             val stroke = 14.dp.toPx()
             val radius = minOf(size.width / 2f, size.height) - stroke
@@ -301,7 +308,7 @@ private fun SteeringGauge(steering: Float, phoneDegrees: Float, modifier: Modifi
         Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(bottom = 6.dp)) {
             Text(formatDegrees(phoneDegrees), fontFamily = Fonts.Display, fontWeight = FontWeight.Bold, fontSize = 44.sp, color = Palette.Text)
             Text(
-                "giro do celular · direção ${(steering * 100).roundToInt()}%",
+                stringResource(R.string.gauge_caption, percent),
                 fontSize = 12.sp,
                 color = Palette.Muted,
             )
@@ -328,21 +335,21 @@ private fun SetupPanel(assignment: AxisAssignment?, onAssignment: (AxisAssignmen
         verticalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterVertically),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Text("Configurando no jogo", fontFamily = Fonts.Display, fontWeight = FontWeight.Bold, fontSize = 22.sp, color = Palette.Text)
+        Text(stringResource(R.string.setting_up_in_game), fontFamily = Fonts.Display, fontWeight = FontWeight.Bold, fontSize = 22.sp, color = Palette.Text)
         Text(
-            "No jogo, escolha o comando. Aqui, toque no mesmo comando e mexa só ele.",
+            stringResource(R.string.setting_up_body),
             fontSize = 13.sp,
             color = Palette.Muted,
             textAlign = TextAlign.Center,
             lineHeight = 18.sp,
         )
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            AssignmentChip("Direção", AxisAssignment.STEERING, assignment, onAssignment)
-            AssignmentChip("Acelerador", AxisAssignment.THROTTLE, assignment, onAssignment)
-            AssignmentChip("Freio", AxisAssignment.BRAKE, assignment, onAssignment)
+            AssignmentChip(stringResource(R.string.axis_steering), AxisAssignment.STEERING, assignment, onAssignment)
+            AssignmentChip(stringResource(R.string.axis_throttle), AxisAssignment.THROTTLE, assignment, onAssignment)
+            AssignmentChip(stringResource(R.string.axis_brake), AxisAssignment.BRAKE, assignment, onAssignment)
         }
         Text(
-            if (assignment == null) "Nenhum escolhido: tudo vai junto para o jogo" else "Só esse comando está indo para o jogo",
+            if (assignment == null) stringResource(R.string.assign_none) else stringResource(R.string.assign_one),
             fontSize = 12.sp,
             color = if (assignment == null) Palette.Muted else Palette.AccentText,
         )
@@ -353,6 +360,7 @@ private fun SetupPanel(assignment: AxisAssignment?, onAssignment: (AxisAssignmen
 private fun RowScope.GameButton(index: Int, controls: TouchControls?) {
     var pressed by remember { mutableStateOf(false) }
     val letter = 'A' + index
+    val description = stringResource(R.string.button_description, letter.toString())
     Box(
         modifier = Modifier
             .weight(1f)
@@ -361,7 +369,7 @@ private fun RowScope.GameButton(index: Int, controls: TouchControls?) {
             .border(1.dp, if (pressed) Palette.Accent else Palette.Line, RoundedCornerShape(16.dp))
             .semantics {
                 role = Role.Button
-                contentDescription = "Botão $letter"
+                contentDescription = description
             }
             .pointerInput(index) {
                 detectTapGestures(onPress = {
@@ -396,7 +404,7 @@ private fun AssignmentChip(label: String, axis: AxisAssignment, selected: AxisAs
 
 /** Cobre a tela enquanto não há sessão: no início ("procurando") ou depois de cair ("conexão perdida"). */
 @Composable
-private fun SearchingOverlay(pcName: String, lost: Boolean, error: String?, onBack: () -> Unit) {
+private fun SearchingOverlay(pcName: String, lost: Boolean, error: SessionError?, onBack: () -> Unit) {
     Box(
         Modifier
             .fillMaxSize()
@@ -414,7 +422,7 @@ private fun SearchingOverlay(pcName: String, lost: Boolean, error: String?, onBa
             verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
             Text(
-                if (lost) "Reconectando…" else "Procurando $pcName…",
+                if (lost) stringResource(R.string.reconnecting) else stringResource(R.string.searching_named, pcName),
                 fontFamily = Fonts.Display,
                 fontWeight = FontWeight.Bold,
                 fontSize = 26.sp,
@@ -423,17 +431,28 @@ private fun SearchingOverlay(pcName: String, lost: Boolean, error: String?, onBa
             )
             Text(
                 if (lost) {
-                    "Seu carro já parou com segurança. Confira se o PC está ligado e no mesmo Wi-Fi."
+                    stringResource(R.string.lost_body)
                 } else {
-                    "Deixe o Virtual Wheel Racing aberto no PC e use o mesmo Wi-Fi nos dois."
+                    stringResource(R.string.searching_body)
                 },
                 fontSize = 14.sp,
                 color = Palette.Muted,
                 textAlign = TextAlign.Center,
                 lineHeight = 20.sp,
             )
-            error?.let { Text(it, fontSize = 12.sp, color = Palette.Brake, textAlign = TextAlign.Center) }
-            OutlinedButton(onClick = onBack, modifier = Modifier.height(44.dp)) { Text("Voltar ao início") }
+            error?.let { Text(errorText(it), fontSize = 12.sp, color = Palette.Brake, textAlign = TextAlign.Center) }
+            OutlinedButton(onClick = onBack, modifier = Modifier.height(44.dp)) { Text(stringResource(R.string.back_home)) }
         }
+    }
+}
+
+@Composable
+private fun errorText(error: SessionError): String {
+    val detail = error.detail.orEmpty()
+    return when (error.kind) {
+        SessionError.Kind.OPEN_FAILED -> stringResource(R.string.error_open_failed, detail)
+        SessionError.Kind.NO_SENSOR -> stringResource(R.string.error_no_sensor)
+        SessionError.Kind.SEARCH_FAILED -> stringResource(R.string.error_search_failed, detail)
+        SessionError.Kind.SEND_FAILED -> stringResource(R.string.error_send_failed, detail)
     }
 }
