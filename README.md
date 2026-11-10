@@ -24,6 +24,14 @@ Hold your phone like a steering wheel: it sends steering, pedals and buttons ove
 > **Status:** latest release: 0.1.2, with simpler screens in English and Portuguese. Validated with rFactor on a Poco X8 Pro (Android 16) and Windows 11. Testing on other games and phones is the most valuable help right now.
 
 <p align="center">
+  <img src="docs/images/demo.gif" width="480" alt="Demo: as the phone turns and the thumb presses the pedals, the steering, throttle and brake bars move at the same time in the Windows program">
+</p>
+<p align="center"><em>Turn the phone and press the pedals: the PC follows in real time (recorded in sync on both screens).</em></p>
+
+<details>
+<summary><strong>Screenshots</strong></summary>
+
+<p align="center">
   <img src="docs/images/phone-driving.jpg" width="820" alt="Phone driving screen: brake and throttle pedals on the sides, a steering gauge showing 0 degrees in the middle, Center button and game buttons A to D">
 </p>
 <p align="center"><em>On the phone: thumb pedals on the sides, live steering angle in the middle, game buttons below.</em></p>
@@ -33,7 +41,9 @@ Hold your phone like a steering wheel: it sends steering, pedals and buttons ove
 </p>
 <p align="center"><em>On Windows: the PC is set up with one click, then you scan the code with the phone. (The pairing code is blurred here.)</em></p>
 
-Both apps are in English and Portuguese and follow your system language; these screenshots show the Portuguese version.
+</details>
+
+Both apps are in English and Portuguese and follow your system language; the demo and screenshots show the Portuguese version.
 
 ## Download
 
